@@ -14,7 +14,6 @@ import {
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
-import { useState } from "react";
 import { HabitForm } from "./HabitForm";
 
 interface NavItem {
@@ -49,8 +48,6 @@ const navItems: NavItem[] = [
 export default function DashboardSideBar() {
   const pathname = usePathname();
   const router = useRouter();
-
-  const [createHabit, setCreateHabit] = useState(false);
 
   return (
     <div className="min-[1024px]:block hidden w-64 border-r h-full bg-background">
@@ -110,7 +107,7 @@ export default function DashboardSideBar() {
                 Settings
               </div>
             </div>
-            <UserProfile />
+            <UserProfile/>
           </div>
         </nav>
       </div>

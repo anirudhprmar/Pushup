@@ -7,20 +7,33 @@ import { HabitCard } from "~/components/HabitCard";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 
+// Helper function to get greeting based on time of day
+function getGreeting(): string {
+  const hour = new Date().getHours();
+  
+  if (hour >= 5 && hour < 12) {
+    return "Good Morning";
+  } else if (hour >= 12 && hour < 17) {
+    return "Good Afternoon";
+  } else if (hour >= 17 && hour < 22) {
+    return "Good Evening";
+  } else {
+    return "Good Night";
+  }
+}
+
 export default function Home() {
  
 const router = useRouter()
 
-const {data:userInfo,isLoading:loadingUserInfo,error:userInfoError} = api.user.me.useQuery()
-
-if(userInfoError?.data?.code === "UNAUTHORIZED"){
-  return router.push("/login")
-}
-
 const {data:userHabits,isLoading:loadingUserHabits,error:userHabitsError} = api.habit.habits.useQuery()
 
-if(loadingUserInfo || loadingUserHabits){
-  return <p className="animate-spin text-2xl"><Loader2/></p>
+if(loadingUserHabits){
+  return (
+    <div className="flex min-h-screen items-center justify-center">
+      <Loader2 className="h-12 w-12 animate-spin text-primary" />
+    </div>
+  );
 }
 
 if(userHabitsError?.data?.code === "UNAUTHORIZED"){
@@ -36,8 +49,10 @@ if(userHabitsError?.data?.code === "UNAUTHORIZED"){
       <div className="max-w-2xl mx-auto px-4 py-8">
         <div className="mb-8 ">
           <div className="w-full flex justify-between items-center">
-            <h1 className="text-3xl font-bold text-foreground ">Hello, {userInfo?.name ?? null}</h1>
-            <p className="text-3xl font-semibold text-muted-foreground">{properTodaysDate}</p>
+            <h1 className="text-2xl font-bold text-foreground">
+              {getGreeting()}!
+            </h1>
+            <p className="text-xl font-semibold text-muted-foreground">{properTodaysDate}</p>
           </div>
         </div>
         <HabitVisualizer/>
