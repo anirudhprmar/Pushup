@@ -4,9 +4,8 @@ Habit tracker , where your daily review is shown to others, there's a leaderboar
 
 ## Todo
 
-- [X]- work on profile
 - [ ]- landing page redesign
-- []- work on accountability feature
+- [ ]- work on accountability feature
 - [ ]- optimize code to server side render, reduce client side code.
 - [ ]- add a payment gateway for accountability 
 - [ ]- implement redis rate limiting and caching.

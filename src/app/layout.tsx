@@ -8,7 +8,7 @@ import { TRPCReactProvider } from "~/trpc/react";
 import { Toaster } from "~/components/ui/sonner";
 import { Providers } from "./providers";
 import { Analytics } from "@vercel/analytics/next"
-
+import { Poppins } from "next/font/google";
 
 
 export const metadata: Metadata = {
@@ -16,21 +16,28 @@ export const metadata: Metadata = {
   description: "Build habits and cultivate a new lifestyle",
 }
 
-const crimsonPro = Crimson_Pro({
-  subsets: ["latin"],
-  variable: "--font-crimson-pro",
-});
-const lato = Lato({
-  subsets: ["latin"],
+// const crimsonPro = Crimson_Pro({
+//   subsets: ["latin"],
+//   variable: "--font-crimson-pro",
+// });
+// const lato = Lato({
+//   subsets: ["latin"],
+//   weight: ["100", "300", "400", "700", "900"],
+//   variable: "--font-lato",
+// });
+
+const poppins = Poppins({
+  subsets:["latin"],
   weight: ["100", "300", "400", "700", "900"],
-  variable: "--font-lato",
-});
+  variable: "--font-poppins",
+
+})
 
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${lato.className} ${crimsonPro.className}`} suppressHydrationWarning>
+    <html lang="en" className={`${poppins.className}`} suppressHydrationWarning>
       <body>
         <Providers>
         <TRPCReactProvider>
