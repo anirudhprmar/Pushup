@@ -1,62 +1,80 @@
 // Example model schema from the Drizzle docs
 // https://orm.drizzle.team/docs/sql-schema-declaration
 
-import { index, pgTableCreator, uniqueIndex } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
+import { index, pgEnum, pgTableCreator, uniqueIndex } from "drizzle-orm/pg-core";
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
  * database instance for multiple projects.
  *
  * @see https://orm.drizzle.team/docs/goodies#multi-project-schema
- */
+*/
 export const createTable = pgTableCreator((name) => `pushup_${name}`);
+
+export const goalType = pgEnum('pushup_goal_type',[
+  "DAILY","WEEKLY","MONTHLY","YEARLY","LIFETIME"
+])
+
+export const goalStatus = pgEnum('pushup_goal_status',[
+  "PENDING","IN_PROGRESS","COMPLETED","FAILED","ACHIEVED"
+])
 
 export const user = createTable(
   "user",
   (d) => ({
     id: d.text("id").primaryKey(),
-     name: d.text("name").notNull(),
-     email: d.text("email").notNull().unique(),
-     emailVerified: d.boolean("email_verified")
-       .$defaultFn(() => false)
-       .notNull(),
-     image: d.text("image"),
-     createdAt: d.timestamp("created_at")
-       .$defaultFn(() => new Date())
-       .notNull(),
-     updatedAt: d.timestamp("updated_at")
-       .$defaultFn(() => new Date())
-       .notNull(),
-  }),
-  (t) => [index("email_idx").on(t.email)],
-) 
-
-
-export const habit = createTable(
-  "habit",
-  (d) => ({
-    id: d.integer("id").primaryKey().generatedByDefaultAsIdentity(),
     name: d.text("name").notNull(),
-    goal: d.text("goal").notNull(),
-    description: d.text("description"),
-    
-    // Categorization for UI (tags/badges)
-    category: d.text("category"), // e.g., "Fitness", "Learning", "Health"
-    color: d.text("color"), // Hex color for UI customization
-    
-    // Habit type
-    habitType: d.text("habit_type", {
-      enum: ["boolean", "numeric", "timer"] // Simple boolean check, numeric goal, or timer-based
-    }).default("boolean").notNull(),
-    
-    // Target value (for numeric/timer habits)
-    targetValue: d.integer("target_value"), // e.g., 20 pages, 30 minutes, 50 pushups
-    targetUnit: d.text("target_unit"), // e.g., "pages", "minutes", "reps"
-    
+    email: d.text("email").notNull().unique(),
+    emailVerified: d.boolean("email_verified")
+      .$defaultFn(() => false)
+      .notNull(),
+    image: d.text("image"),
+    createdAt: d.timestamp("created_at")
+      .$defaultFn(() => new Date())
+      .notNull(),
+    updatedAt: d.timestamp("updated_at")
+      .$defaultFn(() => new Date())
+      .notNull(),  
+    }),
+    (t) => [index("user_email_idx").on(t.email)],
+  ) 
+  
+  export const goals = createTable(
+    "goals",
+    (d) => ({
+      id:d.uuid("id").defaultRandom().primaryKey(),
+      userId: d.text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+      title:d.text("title").notNull(),
+      description:d.text("description"),
+      type:goalType().notNull(),
+      status:goalStatus().default('PENDING').notNull(),
+      targetDeadline:d.timestamp('target_deadline'),
+      completedAt:d.timestamp('completed_at'),
+      createdAt: d.timestamp("created_at")
+        .$defaultFn(() => new Date())
+        .notNull(),
+      updatedAt: d.timestamp("updated_at")
+        .$defaultFn(() => new Date())
+        .notNull(),
+    }),
+    (t) => [index("user_goal_type_idx").on(t.userId,t.type)],
+  )
+
+export const habits = createTable(
+  "habits",
+  (d) => ({
+    id: d.uuid("id").defaultRandom().primaryKey(),
     userId: d.text("user_id")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
-    
+    goalId:d.uuid("goals_id").references(()=> goals.id,{onDelete:"cascade"}),
+    name: d.text("name").notNull(),
+    description: d.text("description"),
+    category: d.text("category"), 
+    color: d.text("color"), 
     createdAt: d.timestamp("created_at")
       .$defaultFn(() => new Date())
       .notNull(),
@@ -70,34 +88,16 @@ export const habit = createTable(
   ],
 ) 
 
-// Simplified habit log - one entry per habit per day
-export const habitLog = createTable(
+export const habitLogs = createTable(
   "habit_log",
   (d) => ({
-    id: d.integer("id").primaryKey().generatedByDefaultAsIdentity(),
-    habitId: d.integer("habit_id")
+    id: d.uuid("id").defaultRandom().primaryKey(),
+    habitId: d.uuid("habit_id")
       .notNull()
-      .references(() => habit.id, { onDelete: "cascade" }),
-    userId: d.text("user_id")
-      .notNull()
-      .references(() => user.id, { onDelete: "cascade" }),
-    
-    // Date of this log entry
-    date: d.date("date").notNull(),
-    
-    // Completion status (simplified - just one field)
+      .references(() => habits.id, { onDelete: "cascade" }),
+    date: d.text("date").notNull(),
     completed: d.boolean("completed").default(false).notNull(),
-    
-    // Actual value achieved (for numeric/timer habits)
-    actualValue: d.integer("actual_value"), // Pages read, minutes spent, reps done
-    
-    // Optional notes about what was done
     notes: d.text("notes"),
-    
-    // Timer tracking (only if habit is timer-based)
-    startedAt: d.timestamp("started_at"),
-    completedAt: d.timestamp("completed_at"),
-    
     createdAt: d.timestamp("created_at")
       .$defaultFn(() => new Date())
       .notNull(),
@@ -107,12 +107,10 @@ export const habitLog = createTable(
   }),
   (t) => [
     index("habit_log_habit_id_idx").on(t.habitId),
-    index("habit_log_user_date_idx").on(t.userId, t.date),
-    // Unique constraint: one log per habit per day
+    index("habit_log_date_idx").on(t.date),
     uniqueIndex("habit_log_unique_daily").on(t.habitId, t.date),
   ],
 )
-
 
 
 
@@ -124,15 +122,96 @@ export const userStats = createTable(
     .notNull()
     .unique()
     .references(() => user.id, { onDelete:  "cascade" }),
-    currentStreak:d.integer("current_streak").default(0),
-    longestStreak:d.integer("longest_streak").default(0),
+    totalHabits:d.integer("total_habits").default(0),
     totalConsistentDays:d.integer("total_consistent_days").default(0),
     updatedAt: d.timestamp("updated_at")
     .$defaultFn(()=> new Date())
     .notNull()
   }),
-  (t) => [index("userstats_leaderboard_idx").on(t.currentStreak.desc(),t.longestStreak.desc())],
+  (t) => [index("userstats_leaderboard_idx").on(t.totalConsistentDays.desc())],
 )
+
+export const tasks = createTable(
+  "user_tasks",
+  (d) => ({
+    id:d.uuid("id").defaultRandom().primaryKey(),
+    userId: d.text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    goalId:d.uuid("goals_id").references(() => goals.id,{onDelete:"cascade"}),
+    task:d.text("task"),
+    startedAt:d.timestamp("started_at"),
+    completedAt:d.timestamp("completed_at"),
+    completed:d.boolean("completed").default(false).notNull(),
+    targetValue: d.integer("target_value"), 
+    targetUnit: d.text("target_unit"), 
+    notes:d.text("notes"),
+    createdAt: d.timestamp("created_at")
+      .$defaultFn(() => new Date())
+      .notNull(),
+    updatedAt: d.timestamp("updated_at")
+      .$defaultFn(() => new Date())
+      .notNull(),
+  }),
+  (t) => [index("user_task_idx").on(t.task)],
+)
+
+
+export const weeklyGoals = createTable(
+  "weekly_goals",
+  (d) => ({
+    id:d.uuid("id").defaultRandom().primaryKey(),
+    userId: d.text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+    weekNumber:d.integer("week_number").notNull(),
+    year:d.integer("year").notNull(),
+    theme:d.text("theme"),
+    priority:d.text("priority"),
+    rating:d.integer("rating").default(0),
+    reviewNotes:d.text("review_notes"),
+    createdAt:d.timestamp("created_at")
+      .$defaultFn(()=> new Date())
+      .notNull()
+  }),
+  (t) => [uniqueIndex("unique_week_plan").on(t.userId,t.year,t.weekNumber)]
+)
+
+//___________Relations_____________
+
+export const userRelations = relations(user,({many}) => ({
+  goals:many(goals),
+  habits:many(habits),
+  weeklyGoals:many(weeklyGoals)
+}))
+
+export const goalsRelations = relations(goals,({one,many})=>({
+  user:one(user,{fields:[goals.userId],references:[user.id]}),
+  habits:many(habits),
+  tasks:many(tasks)
+}))
+
+export const weeklyGoalsRelations = relations(weeklyGoals,({one})=>({
+  user:one(user,{fields:[weeklyGoals.userId],references:[user.id]}),
+}))
+
+export const habitsRelations = relations(habits,({one,many})=>({
+  user:one(user,{fields:[habits.userId],references:[user.id]}),
+  goal:one(goals,{fields:[habits.goalId],references:[goals.id]}),
+  logs:many(habitLogs)
+}))
+
+export const habitLogsRelations = relations(habitLogs,({one})=>({
+  habit:one(habits,{fields:[habitLogs.habitId],references:[habits.id]})
+}))
+
+export const tasksRelations = relations(tasks,({one})=>({
+  goal:one(goals,{fields:[tasks.goalId],references:[goals.id]})
+}))
+
+
+
+//________ Better Auth____________
 
 export const session = createTable("session", (d)=>({
   id: d.text("id").primaryKey(),

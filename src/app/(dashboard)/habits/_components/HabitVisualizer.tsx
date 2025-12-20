@@ -3,7 +3,7 @@
 import { api } from "~/lib/api";
 
 export default function HabitVisualizer() {
-  const { data } = api.habit.getYearlyCompletionDays.useQuery();
+  const { data } = api.habits.getYearlyCompletionDays.useQuery();
   
   const totalDots = 365;
   const containerSize = 330;

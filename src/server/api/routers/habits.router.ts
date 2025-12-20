@@ -2,13 +2,16 @@ import { and, eq } from 'drizzle-orm';
 import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure} from "~/server/api/trpc";
-import { habit, habitLog } from "~/server/db/schema";
+import { habits, habitLogs } from "~/server/db/schema";
+
+//list of things to do ;
+//create a habit, update a habit, delete a habit,
 
 export const habitRouter = createTRPCRouter({
 
   habits: protectedProcedure
     .query(async ({ ctx }) => {
-    const data = await ctx.db.select().from(habit).where(eq(habit.userId,ctx.userId));
+    const data = await ctx.db.select().from(habits).where(eq(habits.userId,ctx.userId));
     if(!data){
       throw new Error("No habits found")
     }
@@ -297,7 +300,7 @@ export const habitRouter = createTRPCRouter({
         })
         .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
     }),
-
+    // last 7 days and 30 days
   // Get habit statistics for different time periods
   getHabitStatistics: protectedProcedure
     .input(z.object({

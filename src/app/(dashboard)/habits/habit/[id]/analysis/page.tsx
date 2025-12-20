@@ -32,11 +32,11 @@ export default function HabitAnalysisPage() {
   const [selectedPeriod, setSelectedPeriod] = useState<TimePeriod>("30");
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
-  const { data: habit, isLoading: habitLoading } = api.habit.getHabitById.useQuery({ habitId });
-  const { data: logs, isLoading: logsLoading } = api.habit.getHabitLogs90Days.useQuery({ habitId });
-  const { data: statistics, isLoading: statsLoading } = api.habit.getHabitStatistics.useQuery({ habitId });
+  const { data: habit, isLoading: habitLoading } = api.habits.getHabitById.useQuery({ habitId });
+  const { data: logs, isLoading: logsLoading } = api.habits.getHabitLogs90Days.useQuery({ habitId });
+  const { data: statistics, isLoading: statsLoading } = api.habits.getHabitStatistics.useQuery({ habitId });
   
-  const deleteHabitMutation = api.habit.deleteHabit.useMutation({
+  const deleteHabitMutation = api.habits.deleteHabit.useMutation({
     onSuccess: () => {
       router.push("/profile");
     },

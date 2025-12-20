@@ -7,7 +7,7 @@ import Image from "next/image"
 import { Trophy, Flame, TrendingUp, Award } from "lucide-react"
 
 export function UserConsistencyTracker() {
-  const { data: completionData } = api.habit.getYearlyCompletionDays.useQuery()
+  const { data: completionData } = api.habits.getYearlyCompletionDays.useQuery()
   const { data: leaderboard } = api.user.getLeaderboard.useQuery()
   const { data: user } = api.user.me.useQuery()
 

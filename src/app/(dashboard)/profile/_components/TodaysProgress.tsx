@@ -2,9 +2,9 @@
 import { api } from "~/lib/api"
 
 export default function TodaysProgress() {
-    const {data,isLoading} = api.habit.getHabitsNotCompletedToday.useQuery();
+    const {data,isLoading} = api.habits.getHabitsNotCompletedToday.useQuery();
   return (
-    <div className=" bg-foreground/10 backdrop-blur-sm text-primary p-10 rounded-xl w-full">
+    <div className="bg-foreground/5 text-primary p-10 rounded-xl w-full">
         <div className="flex flex-col items-start justify-center">
             <h1 className="font-semibold">Today&apos;s Pending</h1>
             <p className="text-xs text-muted-foreground">make today count</p>

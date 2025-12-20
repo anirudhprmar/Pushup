@@ -22,6 +22,20 @@
       "when": 1764914808928,
       "tag": "0002_thankful_elektra",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1766060752803,
+      "tag": "0003_minor_shooting_star",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1766061484808,
+      "tag": "0004_wooden_thaddeus_ross",
+      "breakpoints": true
     }
   ]
 }

@@ -14,15 +14,14 @@ export const userRouter = createTRPCRouter({
     return userInfo;
     }),
 
-  getLeaderboard: publicProcedure
+  getLeaderboard: protectedProcedure
     .query(async ({ ctx }) => {
       const leaderboard = await ctx.db
         .select({
           id: user.id,
           name: user.name,
           image: user.image,
-          currentStreak: userStats.currentStreak,
-          longestStreak: userStats.longestStreak,
+          allHabits: userStats.totalHabits,
           totalConsistentDays: userStats.totalConsistentDays,
         })
         .from(user)

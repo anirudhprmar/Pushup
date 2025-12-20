@@ -35,7 +35,7 @@ function HabitCardWithProgress({
   habit: Habit; 
   inProgress: boolean;
 }) {
-  const { data: log } = api.habit.getHabitProgress.useQuery({ habitId: habit.id });
+  const { data: log } = api.habits.getHabitProgress.useQuery({ habitId: habit.id });
   
   const getProgress = () => {
     if (!log) return 0;
@@ -77,8 +77,8 @@ export default function Home() {
  
 const router = useRouter()
 
-const {data:userHabits,isLoading:loadingUserHabits,error:userHabitsError} = api.habit.habits.useQuery()
-const {data:inProgressHabits} = api.habit.getTodayInProgressHabits.useQuery()
+const {data:userHabits,isLoading:loadingUserHabits,error:userHabitsError} = api.habits.habits.useQuery()
+const {data:inProgressHabits} = api.habits.getTodayInProgressHabits.useQuery()
 
 if(loadingUserHabits){
   return (

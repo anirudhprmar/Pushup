@@ -31,12 +31,12 @@ export default function HabitExecutePage() {
   const [showConfetti, setShowConfetti] = React.useState(false)
   const [showJournal, setShowJournal] = React.useState(false)
 
-  const { data: habit, isLoading: habitLoading } = api.habit.habits.useQuery()
-  const { data: progress } = api.habit.getHabitProgress.useQuery({ habitId })
+  const { data: habit, isLoading: habitLoading } = api.habits.habits.useQuery()
+  const { data: progress } = api.habits.getHabitProgress.useQuery({ habitId })
   
   const trpc = api.useUtils()
-  const startHabit = api.habit.startHabit.useMutation()
-  const completeHabit = api.habit.completeHabit.useMutation({
+  const startHabit = api.habits.startHabit.useMutation()
+  const completeHabit = api.habits.completeHabit.useMutation({
     onSuccess: async () => {
       await trpc.habit.invalidate()
       setShowConfetti(true)

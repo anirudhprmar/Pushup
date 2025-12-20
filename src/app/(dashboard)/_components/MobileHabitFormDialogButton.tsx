@@ -74,7 +74,7 @@ export function MobileHabitForm() {
   const habitType = form.watch("habitType");
 
   const trpc = api.useUtils();
-  const create = api.habit.create.useMutation({
+  const create = api.habits.create.useMutation({
     onSuccess: async () => {
       await trpc.habit.invalidate();
     },

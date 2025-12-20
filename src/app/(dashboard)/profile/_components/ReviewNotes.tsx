@@ -6,11 +6,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card"
 import { Quote } from "lucide-react"
 
 export function ReviewNotes() {
-  const { data: notes, isLoading } = api.habit.getRecentHabitNotes.useQuery()
+  const { data: notes, isLoading } = api.habits.getRecentHabitNotes.useQuery()
 
   if (isLoading) {
     return (
-      <Card className="w-full h-[300px] bg-foreground/5 backdrop-blur-sm border-white/10">
+      <Card className="w-full h-full bg-foreground/5 backdrop-blur-sm border-white/10">
         <CardHeader>
           <CardTitle className="text-lg font-medium">Recent Reflections</CardTitle>
         </CardHeader>
@@ -41,7 +41,7 @@ export function ReviewNotes() {
   }
 
   return (
-    <Card className="w-full h-[300px] bg-foreground/5 backdrop-blur-sm border-white/10 flex flex-col">
+    <Card className="w-full h-full bg-foreground/5 backdrop-blur-sm border-white/10 flex flex-col">
       <CardHeader className="pb-2">
         <CardTitle className="text-lg font-medium flex items-center gap-2">
           <Quote className="w-4 h-4 text-blue-400" />

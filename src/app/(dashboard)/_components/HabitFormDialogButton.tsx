@@ -80,7 +80,7 @@ export function HabitForm() {
   }, [category, form])
 
   const trpc = api.useUtils()
-  const create = api.habit.create.useMutation({
+  const create = api.habits.create.useMutation({
     onSuccess: async () => {
       await trpc.habit.invalidate()
     }

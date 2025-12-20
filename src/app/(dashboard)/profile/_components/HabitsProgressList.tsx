@@ -6,7 +6,7 @@ import { Activity } from "lucide-react"
 import { motion } from "motion/react"
 
 export function HabitsProgressList() {
-  const { data: habits, isLoading } = api.habit.getAllHabitsWithStats.useQuery()
+  const { data: habits, isLoading } = api.habits.getAllHabitsWithStats.useQuery()
 
   if (isLoading) {
     return (
