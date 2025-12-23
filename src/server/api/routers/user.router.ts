@@ -1,6 +1,6 @@
 import { eq, desc } from 'drizzle-orm';
 
-import { createTRPCRouter, protectedProcedure, publicProcedure } from "~/server/api/trpc";
+import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { user, userStats } from "~/server/db/schema";
 
 export const userRouter = createTRPCRouter({

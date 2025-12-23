@@ -156,7 +156,7 @@ export const tasks = createTable(
   (t) => [index("user_task_idx").on(t.task)],
 )
 
-
+//might had to update this cause how we store weekly goals or keep track of it
 export const weeklyGoals = createTable(
   "weekly_goals",
   (d) => ({

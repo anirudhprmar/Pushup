@@ -4,12 +4,9 @@ import { z } from "zod";
 import { createTRPCRouter, protectedProcedure} from "~/server/api/trpc";
 import { habits, habitLogs } from "~/server/db/schema";
 
-//list of things to do ;
-//create a habit, update a habit, delete a habit,
-
 export const habitRouter = createTRPCRouter({
 
-  habits: protectedProcedure
+  getHabits: protectedProcedure
     .query(async ({ ctx }) => {
     const data = await ctx.db.select().from(habits).where(eq(habits.userId,ctx.userId));
     if(!data){
@@ -19,29 +16,23 @@ export const habitRouter = createTRPCRouter({
     return data;
     }),
 
-  create: protectedProcedure
+  createHabit: protectedProcedure
     .input(z.object({
+        goalId: z.uuid().optional(),
         name: z.string().min(1),
-        goal: z.string().min(1),
         description: z.string().optional(),
         category: z.string().optional(),
-        color: z.string().optional(),
-        habitType: z.enum(["boolean", "numeric", "timer"]).default("boolean"),
-        targetValue: z.number().optional(),
-        targetUnit: z.string().optional(),
+        color: z.string().optional()
       }))
     .mutation(async ({ ctx, input }) => {
-      const { name, goal, description, category, color, habitType, targetValue, targetUnit } = input
+      const { name,goalId, description, category, color } = input
 
-      await ctx.db.insert(habit).values({
+      await ctx.db.insert(habits).values({
         name,
-        goal,
+        goalId,
         description,
         category,
         color,
-        habitType,
-        targetValue,
-        targetUnit,
         userId:ctx.userId
       });
 
@@ -50,17 +41,17 @@ export const habitRouter = createTRPCRouter({
 
   deleteHabit: protectedProcedure
     .input(z.object({
-      habitId: z.number(),
+      habitId: z.uuid(),
     }))
     .mutation(async ({ ctx, input }) => {
       // First verify the habit belongs to the user
       const [habitData] = await ctx.db
         .select()
-        .from(habit)
+        .from(habits)
         .where(
           and(
-            eq(habit.id, input.habitId),
-            eq(habit.userId, ctx.userId)
+            eq(habits.id, input.habitId),
+            eq(habits.userId, ctx.userId)
           )
         )
         .limit(1);
@@ -71,74 +62,27 @@ export const habitRouter = createTRPCRouter({
 
       // Delete the habit (cascade will handle habitLog deletion)
       await ctx.db
-        .delete(habit)
-        .where(eq(habit.id, input.habitId));
+        .delete(habits)
+        .where(eq(habits.id, input.habitId));
 
       return { success: true };
     }),
 
-  startHabit: protectedProcedure
+    setHabitCompleted:protectedProcedure
     .input(z.object({
-      habitId: z.number(),
+      habitId:z.uuid(),
+      notes:z.string().optional()
     }))
-    .mutation(async ({ ctx, input }) => {
-      const today = new Date().toISOString().split('T')[0]!;
-      
-      // Check if log already exists for today
-      const existingLog = await ctx.db
+    .mutation(async({ctx,input})=>{
+      const today = new Date().toDateString().split('T')[0]!;
+
+       const [log] = await ctx.db
         .select()
-        .from(habitLog)
+        .from(habitLogs)
         .where(
           and(
-            eq(habitLog.habitId, input.habitId),
-            eq(habitLog.date, today)
-          )
-        )
-        .limit(1);
-
-      if (existingLog.length > 0) {
-        // Update existing log with startedAt if not already started
-        if (!existingLog[0]!.startedAt) {
-          await ctx.db
-            .update(habitLog)
-            .set({ startedAt: new Date() })
-            .where(eq(habitLog.id, existingLog[0]!.id));
-        }
-        return { success: true, logId: existingLog[0]!.id };
-      }
-
-      // Create new log entry
-      const [newLog] = await ctx.db
-        .insert(habitLog)
-        .values({
-          habitId: input.habitId,
-          userId: ctx.userId,
-          date: today,
-          startedAt: new Date(),
-          completed: false,
-        })
-        .returning();
-
-      return { success: true, logId: newLog!.id };
-    }),
-
-  completeHabit: protectedProcedure
-    .input(z.object({
-      habitId: z.number(),
-      actualValue: z.number().optional(),
-      notes: z.string().optional(),
-    }))
-    .mutation(async ({ ctx, input }) => {
-      const today = new Date().toISOString().split('T')[0]!;
-
-      // Find today's log
-      const [log] = await ctx.db
-        .select()
-        .from(habitLog)
-        .where(
-          and(
-            eq(habitLog.habitId, input.habitId),
-            eq(habitLog.date, today)
+            eq(habitLogs.habitId, input.habitId),
+            eq(habitLogs.date, today)
           )
         )
         .limit(1);
@@ -147,49 +91,29 @@ export const habitRouter = createTRPCRouter({
         throw new Error("No active habit session found");
       }
 
-      // Update log with completion data
       await ctx.db
-        .update(habitLog)
-        .set({
-          completed: true,
-          completedAt: new Date(),
-          actualValue: input.actualValue,
-          notes: input.notes,
-        })
-        .where(eq(habitLog.id, log.id));
+      .update(habitLogs)
+      .set({
+        completed:true,
+        notes:input.notes
+      })
+      .where(eq(habitLogs.id,log.id))
 
-      return { success: true };
-    }),
+      return {success:true}
+    })
+    ,
 
-  getHabitProgress: protectedProcedure
-    .input(z.object({
-      habitId: z.number(),
-    }))
-    .query(async ({ ctx, input }) => {
-      const today = new Date().toISOString().split('T')[0]!;
-
-      const [log] = await ctx.db
-        .select()
-        .from(habitLog)
-        .where(
-          and(
-            eq(habitLog.habitId, input.habitId),
-            eq(habitLog.date, today)
-          )
-        )
-        .limit(1);
-
-      return log ?? null;
-    }),
-  getHabitsNotCompletedToday: protectedProcedure
+    getHabitsNotCompleted: protectedProcedure
     .query(async ({ ctx }) => {
       const today = new Date().toISOString().split('T')[0]!;
 
       // 1. Get all active habits for the user
       const allHabits = await ctx.db
         .select()
-        .from(habit)
-        .where(eq(habit.userId, ctx.userId));
+        .from(habits)
+        .where(
+          eq(habits.userId, ctx.userId)
+        );
 
       if (allHabits.length === 0) {
         return [];
@@ -197,70 +121,33 @@ export const habitRouter = createTRPCRouter({
 
       // 2. Get IDs of habits that are COMPLETED today
       const completedLogs = await ctx.db
-        .select({ habitId: habitLog.habitId })
-        .from(habitLog)
+        .select({ habitId: habitLogs.habitId })
+        .from(habitLogs)
         .where(
           and(
-            eq(habitLog.userId, ctx.userId),
-            eq(habitLog.date, today),
-            eq(habitLog.completed, true)
+            eq(habits.userId, ctx.userId),
+            eq(habitLogs.date, today),
+            eq(habitLogs.completed, true)
           )
         );
 
       const completedHabitIds = new Set(completedLogs.map(log => log.habitId));
 
-      // 3. Return habits that are NOT in the completed set
-      // This includes:
-      // - Habits with no log for today (not started)
-      // - Habits with a log for today but completed = false (in progress)
       return allHabits.filter(h => !completedHabitIds.has(h.id));
     }),
-  getTodayInProgressHabits: protectedProcedure
-    .query(async ({ ctx }) => {
-      const today = new Date().toISOString().split('T')[0]!;
 
-      // Get all logs that are started but not completed today
-      const logs = await ctx.db
-        .select()
-        .from(habitLog)
-        .where(
-          and(
-            eq(habitLog.userId, ctx.userId),
-            eq(habitLog.date, today),
-            eq(habitLog.completed, false)
-          )
-        );
-
-      // Get habit IDs
-      const habitIds = logs.map(log => log.habitId);
-
-      if (habitIds.length === 0) {
-        return [];
-      }
-
-      // Fetch the actual habits
-      const habits = await ctx.db
-        .select()
-        .from(habit)
-        .where(eq(habit.userId, ctx.userId));
-
-      // Filter to only in-progress habits
-      return habits.filter(h => habitIds.includes(h.id));
-    }),
-
-  // Get habit by ID for analysis page
-  getHabitById: protectedProcedure
+    getHabitById: protectedProcedure
     .input(z.object({
-      habitId: z.number(),
+      habitId: z.uuid(),
     }))
     .query(async ({ ctx, input }) => {
       const [habitData] = await ctx.db
         .select()
-        .from(habit)
+        .from(habits)
         .where(
           and(
-            eq(habit.id, input.habitId),
-            eq(habit.userId, ctx.userId)
+            eq(habits.id, input.habitId),
+            eq(habits.userId, ctx.userId)
           )
         )
         .limit(1);
@@ -272,10 +159,9 @@ export const habitRouter = createTRPCRouter({
       return habitData;
     }),
 
-  // Get last 90 days of habit logs
-  getHabitLogs90Days: protectedProcedure
+    getLast90DaysLogs: protectedProcedure
     .input(z.object({
-      habitId: z.number(),
+      habitId: z.uuid(),
     }))
     .query(async ({ ctx, input }) => {
       const today = new Date();
@@ -284,12 +170,9 @@ export const habitRouter = createTRPCRouter({
 
       const logs = await ctx.db
         .select()
-        .from(habitLog)
+        .from(habitLogs)
         .where(
-          and(
-            eq(habitLog.habitId, input.habitId),
-            eq(habitLog.userId, ctx.userId)
-          )
+          eq(habitLogs.habitId, input.habitId)
         );
 
       // Filter logs from last 90 days and sort by date descending
@@ -300,11 +183,10 @@ export const habitRouter = createTRPCRouter({
         })
         .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
     }),
-    // last 7 days and 30 days
-  // Get habit statistics for different time periods
+    
   getHabitStatistics: protectedProcedure
     .input(z.object({
-      habitId: z.number(),
+      habitId: z.uuid(),
     }))
     .query(async ({ ctx, input }) => {
       const today = new Date();
@@ -312,12 +194,10 @@ export const habitRouter = createTRPCRouter({
       // Get all logs for this habit
       const allLogs = await ctx.db
         .select()
-        .from(habitLog)
+        .from(habitLogs)
         .where(
-          and(
-            eq(habitLog.habitId, input.habitId),
-            eq(habitLog.userId, ctx.userId)
-          )
+            
+          eq(habitLogs.habitId, input.habitId)
         );
 
       // Helper function to calculate stats for a time period
@@ -334,15 +214,6 @@ export const habitRouter = createTRPCRouter({
         const completionRate = periodLogs.length > 0 
           ? Math.round((completedLogs.length / periodLogs.length) * 100)
           : 0;
-
-        // Calculate average actual value for numeric/timer habits
-        const logsWithValues = completedLogs.filter(log => log.actualValue !== null);
-        const avgActualValue = logsWithValues.length > 0
-          ? Math.round(
-              logsWithValues.reduce((sum, log) => sum + (log.actualValue ?? 0), 0) / logsWithValues.length
-            )
-          : null;
-
         // Calculate current streak
         let currentStreak = 0;
         const sortedLogs = [...allLogs]
@@ -360,7 +231,6 @@ export const habitRouter = createTRPCRouter({
           totalDays: periodLogs.length,
           completedDays: completedLogs.length,
           completionRate,
-          avgActualValue,
           currentStreak,
         };
       };
@@ -379,14 +249,13 @@ export const habitRouter = createTRPCRouter({
       };
     }),
 
-  // Get completed day numbers (Day 1 = first day ALL habits completed, Day 2 = second day, etc.)
   getYearlyCompletionDays: protectedProcedure
     .query(async ({ ctx }) => {
       // Get all user habits
       const userHabits = await ctx.db
         .select()
-        .from(habit)
-        .where(eq(habit.userId, ctx.userId));
+        .from(habits)
+        .where(eq(habits.userId, ctx.userId));
       
       const totalHabits = userHabits.length;
       
@@ -397,12 +266,9 @@ export const habitRouter = createTRPCRouter({
       // Get all completed logs
       const completedLogs = await ctx.db
         .select()
-        .from(habitLog)
+        .from(habitLogs)
         .where(
-          and(
-            eq(habitLog.userId, ctx.userId),
-            eq(habitLog.completed, true)
-          )
+          eq(habitLogs.completed, true)
         );
 
       // Group by date and count completed habits per day
@@ -428,13 +294,14 @@ export const habitRouter = createTRPCRouter({
 
       return { completedDayNumbers };
     }),
+
     getYearlyCompletionDaysDetailed: protectedProcedure
       .query(async ({ ctx }) => {
         // Get all user habits
         const userHabits = await ctx.db
           .select()
-          .from(habit)
-          .where(eq(habit.userId, ctx.userId));
+          .from(habits)
+          .where(eq(habits.userId, ctx.userId));
         
         const totalHabits = userHabits.length;
         
@@ -445,12 +312,9 @@ export const habitRouter = createTRPCRouter({
         // Get all completed logs
         const completedLogs = await ctx.db
           .select()
-          .from(habitLog)
+          .from(habitLogs)
           .where(
-            and(
-              eq(habitLog.userId, ctx.userId),
-              eq(habitLog.completed, true)
-            )
+              eq(habitLogs.completed, true)
           );
         
         // Group by date and count completed habits per day
@@ -487,24 +351,18 @@ export const habitRouter = createTRPCRouter({
     .query(async ({ ctx }) => {
       const notes = await ctx.db
         .select({
-          id: habitLog.id,
-          date: habitLog.date,
-          note: habitLog.notes,
-          habitName: habit.name,
-          habitColor: habit.color,
+          id: habitLogs.id,
+          date: habitLogs.date,
+          note: habitLogs.notes,
+          habitName: habits.name,
+          habitColor: habits.color,
         })
-        .from(habitLog)
-        .innerJoin(habit, eq(habitLog.habitId, habit.id))
+        .from(habitLogs)
+        .innerJoin(habits, eq(habitLogs.habitId, habits.id))
         .where(
-          and(
-            eq(habitLog.userId, ctx.userId),
-            // We want notes that are not null and not empty
-            // Since we can't easily use sql`length(notes) > 0` with all drivers in a unified way without raw sql,
-            // and we are filtering in JS anyway for safety, we'll just fetch non-nulls if possible or filter all.
-            // For now, let's just fetch and filter in JS to be safe and simple.
-          )
+          eq(habits.userId,ctx.userId)
         )
-        .orderBy(habitLog.date); 
+        .orderBy(habitLogs.date); 
 
       // Filter in memory to ensure we only get actual notes and sort descending
       return notes
@@ -515,24 +373,21 @@ export const habitRouter = createTRPCRouter({
 
   getAllHabitsWithStats: protectedProcedure
     .query(async ({ ctx }) => {
-      const habits = await ctx.db
+      const userHabits = await ctx.db
         .select()
-        .from(habit)
-        .where(eq(habit.userId, ctx.userId));
+        .from(habits)
+        .where(eq(habits.userId, ctx.userId));
 
       const today = new Date();
       const thirtyDaysAgo = new Date(today);
       thirtyDaysAgo.setDate(today.getDate() - 30);
 
-      const stats = await Promise.all(habits.map(async (h) => {
+      const stats = await Promise.all(userHabits.map(async (h) => {
         const logs = await ctx.db
           .select()
-          .from(habitLog)
+          .from(habitLogs)
           .where(
-            and(
-              eq(habitLog.habitId, h.id),
-              eq(habitLog.userId, ctx.userId)
-            )
+              eq(habitLogs.habitId, h.id)
           );
         
         const recentLogs = logs.filter(log => {

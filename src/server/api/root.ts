@@ -1,6 +1,9 @@
 import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
 import { userRouter } from "./routers/user.router";
 import { habitRouter } from "./routers/habits.router";
+import { goalsRouter } from "./routers/goals.router";
+import { tasksRouter } from "./routers/tasks.router";
+import { weeklyGoalsRouter } from "./routers/weekly-goals.router";
 
 /**
  * This is the primary router for your server.
@@ -9,7 +12,10 @@ import { habitRouter } from "./routers/habits.router";
  */
 export const appRouter = createTRPCRouter({
   user: userRouter,
-  habits:habitRouter
+  habits:habitRouter,
+  goals:goalsRouter,
+  tasks:tasksRouter,
+  weeklyGoals:weeklyGoalsRouter
 });
 
 // export type definition of API
