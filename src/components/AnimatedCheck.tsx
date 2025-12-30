@@ -4,8 +4,6 @@ import { motion, AnimatePresence } from "motion/react";
 import { useState } from "react";
 import { ConfettiCelebration } from "./ConfettiCelebration";
 import { api } from "~/lib/api";
-import { Button } from "./ui/button";
-import { set } from "zod";
 
 export function AnimatedCheck({habitId,checkedStatus}:{habitId:string, checkedStatus?:boolean}) {
   const [isChecked,setIsChecked] = useState(false)
@@ -17,13 +15,14 @@ export function AnimatedCheck({habitId,checkedStatus}:{habitId:string, checkedSt
     const markCompleted = api.habits.setHabitCompleted.useMutation({
       onSuccess: async () => {
         await trpc.habits.invalidate()
+        await trpc.habits.getHabitCompletionDays.invalidate({habitId})
       }
     })
     
     const handleCheck = async()=>{
       await markCompleted.mutateAsync({
         habitId,
-        notes:"test2",
+        notes:"testing123",
       })
       setIsChecked(!isChecked)
     }
@@ -56,7 +55,8 @@ export function AnimatedCheck({habitId,checkedStatus}:{habitId:string, checkedSt
             transition={{ duration: 0.1 }}
           >
             {/* Empty circle or subtle outline */}
-            <Button onClick={handleCheck} variant={'default'} size={'sm'} className="w-6 h-6 rounded-full border-2 border-gray-300" />
+            {/* <Button onClick={handleCheck} variant={'default'} size={'sm'} className="w-2 h-8 rounded-full border-2 border-gray-300 bg-primary-foreground" /> */}
+            <div onClick={handleCheck} className="w-6 h-6 rounded-lg border-2 border-gray-300 bg-transparent cursor-pointer transition-colors"></div>
           </motion.div>
         )}
       </AnimatePresence>

@@ -1,13 +1,12 @@
 "use client"
 // import { HydrateClient } from "~/trpc/server";
 import { api } from "~/lib/api";
-import dateAndactualMonth from "~/lib/day&months";
 import { HabitCard } from "~/components/HabitCard";
 import { useRouter } from "next/navigation";
-import { Loader2 } from "lucide-react";
-import type { habits } from "~/server/db/schema";
+import { Activity, Loader2, TreeDeciduous } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { HabitForm } from "../_components/HabitForm";
+import { HabitsProgressList } from "../profile/_components/HabitsProgressList";
 
 
 export default function Home() {
@@ -49,11 +48,14 @@ const {data:userHabits,isLoading,error} = api.habits.getHabits.useQuery()
               <div>
               <Card className="bg-secondary w-full max-w-4xl">
                  <CardHeader>
-                  <CardTitle>Current Habits</CardTitle>
+                  <CardTitle className="text-lg font-medium flex items-center gap-2">
+                    <TreeDeciduous className="text-primary"/>
+                    Current Habits
+                    </CardTitle>
                 </CardHeader>
               <CardContent>
 
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-1 gap-2">
                   {
                     userHabits.map((habit) => (
                       <HabitCard 
@@ -63,13 +65,46 @@ const {data:userHabits,isLoading,error} = api.habits.getHabits.useQuery()
                     ))
                   }
                 </div>
-                  </CardContent>
-                  </Card>
+              </CardContent>
+              </Card>
+
               </div>
 
             ) : (
               <p>No habits found. Start by creating a new habit!</p>
             )}
+
+             {userHabits && userHabits.length > 0 ? (
+              <div>
+              <Card className="bg-secondary w-full max-w-4xl">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-lg font-medium flex items-center gap-2">
+                    <Activity className="w-4 h-4 text-primary" />
+                    Habit Consistency
+                    <span className="text-xs font-normal text-muted-foreground ml-auto">over 365 days</span>
+                  </CardTitle>
+                </CardHeader>
+              <CardContent>
+
+                <div className="grid grid-cols-1 gap-2">
+                  {
+                    userHabits.map((habit) => (
+                      <HabitsProgressList 
+                      key={habit.habits.id}
+                      habit={habit}
+                      />
+                    ))
+                  }
+                </div>
+              </CardContent>
+              </Card>
+
+              </div>
+
+            ) : (
+              <p>No habits data found.</p>
+            )}
+
           </div>
         )}
       </div>

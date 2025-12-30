@@ -1,4 +1,4 @@
-import { and, eq } from 'drizzle-orm';
+import { and, desc, eq, gte, lte } from 'drizzle-orm';
 import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure} from "~/server/api/trpc";
@@ -86,7 +86,7 @@ export const habitRouter = createTRPCRouter({
       notes:z.string().optional()
     }))
     .mutation(async({ctx,input})=>{
-      const today = new Date().toDateString().split('T')[0]!;
+      const today = new Date().toDateString();
 
       await ctx.db
       .update(habitLogs)
@@ -95,7 +95,7 @@ export const habitRouter = createTRPCRouter({
         completed:true,
         notes:input.notes
       })
-      .where(eq(habitLogs.habitId,input.habitId)).returning()
+      .where(eq(habitLogs.habitId,input.habitId))
 
       return {success:true}
     })
@@ -163,23 +163,22 @@ export const habitRouter = createTRPCRouter({
     }))
     .query(async ({ ctx, input }) => {
       const today = new Date();
+      today.setHours(23, 59, 590, 999);
       const ninetyDaysAgo = new Date(today);
       ninetyDaysAgo.setDate(today.getDate() - 90);
 
-      const logs = await ctx.db
+      await ctx.db
         .select()
         .from(habitLogs)
         .where(
-          eq(habitLogs.habitId, input.habitId)
-        );
-
-      // Filter logs from last 90 days and sort by date descending
-      return logs
-        .filter(log => {
-          const logDate = new Date(log.date);
-          return logDate >= ninetyDaysAgo && logDate <= today;
-        })
-        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+          and (
+            eq(habitLogs.habitId, input.habitId),
+            gte(habitLogs.date, ninetyDaysAgo.toDateString()),
+            lte(habitLogs.date, today.toDateString())
+          )
+        )
+        .orderBy(desc(habitLogs.date))
+        .limit(91)
     }),
     
   getHabitStatistics: protectedProcedure
@@ -201,10 +200,12 @@ export const habitRouter = createTRPCRouter({
       // Helper function to calculate stats for a time period
       const calculatePeriodStats = (days: number) => {
         const periodStart = new Date(today);
+        periodStart.setHours(23, 59, 59, 999);
         periodStart.setDate(today.getDate() - days);
 
         const periodLogs = allLogs.filter(log => {
           const logDate = new Date(log.date);
+          logDate.setHours(23, 59, 59, 999);
           return logDate >= periodStart && logDate <= today;
         });
 
@@ -218,7 +219,10 @@ export const habitRouter = createTRPCRouter({
           .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
         
         for (const log of sortedLogs) {
-          if (log.completed) {
+          if(log.date !== today.toDateString()){
+            break;
+          }
+          else if (log.completed) {
             currentStreak++;
           } else {
             break;
@@ -246,7 +250,53 @@ export const habitRouter = createTRPCRouter({
         },
       };
     }),
+  getHabitCompletionDays: protectedProcedure
+    .input(z.object({
+      habitId: z.uuid(),
+    }))
+    .query(async ({ ctx, input }) => {
 
+      const userHabit = await ctx.db
+      .select()
+      .from(habits)
+      .where(
+        and (
+          eq(habits.userId,ctx.userId),
+          eq(habits.id,input.habitId)
+        )
+      )
+
+      if(userHabit.length===0){
+        throw new Error("Habit not found")
+      }
+
+      const completedLogs = await ctx.db
+      .select()
+      .from(habitLogs)
+      .where(
+        and(
+          eq(habitLogs.habitId,input.habitId),
+          eq(habitLogs.completed,true)
+        )
+      )
+
+      const completedDays = new Map<string,number>();
+      for (const log of completedLogs) {
+        const current = completedDays.get(log.date) ?? 0;
+        completedDays.set(log.date, current+1);
+      }
+
+      let consistentDays = 0;
+      for(const count of completedDays.values()){
+        if(count>=1){
+          consistentDays++;
+        }
+      }
+
+      return {consistentDays};
+
+    })
+    ,
   getYearlyCompletionDays: protectedProcedure
     .query(async ({ ctx }) => {
       // Get all user habits
@@ -367,43 +417,7 @@ export const habitRouter = createTRPCRouter({
         .filter(n => n.note && n.note.trim().length > 0)
         .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
         .slice(0, 10);
-    }),
-
-  getAllHabitsWithStats: protectedProcedure
-    .query(async ({ ctx }) => {
-      const userHabits = await ctx.db
-        .select()
-        .from(habits)
-        .where(eq(habits.userId, ctx.userId));
-
-      const today = new Date();
-      const thirtyDaysAgo = new Date(today);
-      thirtyDaysAgo.setDate(today.getDate() - 30);
-
-      const stats = await Promise.all(userHabits.map(async (h) => {
-        const logs = await ctx.db
-          .select()
-          .from(habitLogs)
-          .where(
-              eq(habitLogs.habitId, h.id)
-          );
-        
-        const recentLogs = logs.filter(log => {
-           const d = new Date(log.date);
-           return d >= thirtyDaysAgo && d <= today;
-        });
-
-        const completedCount = recentLogs.filter(l => l.completed).length;
-        const completionRate = Math.round((completedCount / 30) * 100);
-
-        return {
-          ...h,
-          completionRate
-        };
-      }));
-
-      return stats;
-    }),
+    })
         
 });
 

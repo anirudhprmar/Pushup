@@ -46,31 +46,28 @@ export function HabitCard({
     >
      
 
-      <div className="relative p-6 space-y-4">
-        {/* Header with title, category, and streak */}
-        <div>
+      <div className="relative p-2 space-y-4">
+        {/* <div className="grid grid-cols-1"> */}
           <div className="flex items-start justify-between gap-2">
 
               <div className="flex items-center gap-2">
 
-                <div className="flex items-center justify-center gap-5 ">
+                <div className="flex items-center justify-center gap-2 ">
 
                     <AnimatedCheck habitId={id} checkedStatus={habit.habit_logs?.completed ?? false} />
 
-                    <span className={`font-semibold text-base relative inline-block ${false ? 'opacity-60 scale-[0.98]':'text-foreground/90 dark:text-foreground '}`} >
+                    <span className={`font-semibold text-base relative inline-block ${habit.habit_logs?.completed ? 'opacity-60 scale-[0.98]':'text-foreground/90 dark:text-foreground '}`} >
                         {name}
                         {false && (
-                        <span className="absolute inset-0 h-[2px] bg-destructive top-1/2 -translate-y-1/2 origin-left scale-x-100 " />
+                        <span className="absolute inset-0 h-0.2 bg-destructive top-1/2 -translate-y-1/2 origin-left scale-x-100 " />
                       )}
                     </span>
                     <p className="text-sm text-foreground/70 dark:text-foreground/60 line-clamp-2">
-                      {description}
+                      {description && description.length > 10 ? description.slice(0,10) + "..." : description }
                     </p>
                 </div>
               </div>
-              
-              {/* TODO: group acc. to category and arrange  */}
-            
+                          
               {/* Category Badge */}
               {category && (
                 <div className="flex items-center gap-2">
@@ -91,10 +88,8 @@ export function HabitCard({
               )}
             
           </div>
-
-
         </div>
-      </div>
+      {/* </div> */}
     </div>
   );
 }
