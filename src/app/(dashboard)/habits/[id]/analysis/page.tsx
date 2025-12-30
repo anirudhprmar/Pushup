@@ -28,21 +28,20 @@ type TimePeriod = "7" | "30" | "90";
 export default function HabitAnalysisPage() {
   const params = useParams();
   const router = useRouter();
-  const habitId = parseInt(params.id as string);
+  const habitId = params.id as string
   const [selectedPeriod, setSelectedPeriod] = useState<TimePeriod>("30");
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   const { data: habit, isLoading: habitLoading } = api.habits.getHabitById.useQuery({ habitId });
-  const { data: logs, isLoading: logsLoading } = api.habits.getHabitLogs90Days.useQuery({ habitId });
+  const { data: logs, isLoading: logsLoading } = api.habits.getLast90DaysLogs.useQuery({ habitId });
   const { data: statistics, isLoading: statsLoading } = api.habits.getHabitStatistics.useQuery({ habitId });
   
   const deleteHabitMutation = api.habits.deleteHabit.useMutation({
     onSuccess: () => {
-      router.push("/profile");
+      router.push("/habits");
     },
     onError: (error) => {
       console.error("Failed to delete habit:", error);
-      alert("Failed to delete habit. Please try again.");
     },
   });
 
@@ -68,18 +67,10 @@ export default function HabitAnalysisPage() {
 
   const CategoryIcon = habit.category ? getCategoryIcon(habit.category) : null;
 
-  // Get data for selected period
-  const getPeriodData = () => {
-    const days = parseInt(selectedPeriod);
-    return logs?.slice(0, days).reverse() ?? [];
-  };
-
-  const periodLogs = getPeriodData();
   
-  // Prepare data for area chart
-  const chartData = periodLogs.map((log) => ({
+  const chartData = logs?.map((log) => ({
     date: new Date(log.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-    value: log.completed ? (log.actualValue ?? 100) : 0,
+    value: log.completed ? (log.completed ? 100 : 0) : 0,
     completed: log.completed ? 1 : 0,
   }));
 
@@ -201,7 +192,7 @@ export default function HabitAnalysisPage() {
           <div className="flex items-center justify-between mb-3 sm:mb-4">
             <Button
               variant="ghost"
-              onClick={() => router.push("/profile")}
+              onClick={() => router.push("/habits")}
               className="-ml-2"
               size="sm"
             >
@@ -341,7 +332,6 @@ export default function HabitAnalysisPage() {
             <ChartContainer
               config={{
                 value: {
-                  label: habit.habitType === "boolean" ? "Completed" : "Value",
                   color: habit.color ?? "#3b82f6",
                 },
               }}
@@ -404,17 +394,17 @@ export default function HabitAnalysisPage() {
             </CardContent>
           </Card>
 
-          {currentStats?.avgActualValue && (
-            <Card className="col-span-2 sm:col-span-1">
-              <CardContent className="pt-4 sm:pt-6">
-                <div className="flex flex-col items-center text-center">
-                  <Target className="w-6 h-6 sm:w-8 sm:h-8 mb-2 text-blue-500" />
-                  <div className="text-xl sm:text-2xl font-bold">{currentStats.avgActualValue}</div>
-                  <div className="text-xs text-muted-foreground">Avg {habit.targetUnit}</div>
-                </div>
-              </CardContent>
-            </Card>
-          )}
+
+          <Card className="col-span-2 sm:col-span-1">
+            <CardContent className="pt-4 sm:pt-6">
+              <div className="flex flex-col items-center text-center">
+                <Target className="w-6 h-6 sm:w-8 sm:h-8 mb-2 text-blue-500" />
+                <div className="text-xl sm:text-2xl font-bold">{currentStats?.completionRate}</div>
+                <div className="text-xs text-muted-foreground">Completion Rate</div>
+              </div>
+            </CardContent>
+          </Card>
+        
         </div>
 
         {/* Daily Logs */}
@@ -453,11 +443,6 @@ export default function HabitAnalysisPage() {
                           {log.completed ? "✓" : "○"}
                         </Badge>
                       </div>
-                      {log.actualValue && (
-                        <p className="text-xs sm:text-sm text-muted-foreground">
-                          {log.actualValue} {habit.targetUnit}
-                        </p>
-                      )}
                       {log.notes && (
                         <p className="text-xs sm:text-sm text-foreground/80 italic truncate">
                           &ldquo;{log.notes}&rdquo;

@@ -2,6 +2,8 @@
 
 import { api } from "~/lib/api"
 import { motion } from "motion/react"
+import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
 
 interface HabitProps {
 habits: {
@@ -56,7 +58,14 @@ export function HabitsProgressList({habit}: {habit: HabitProps}) {
         className="space-y-1.5"
       >
         <div className="flex items-center justify-between text-sm">
-          <span className="font-medium text-gray-200 text-lg">{habit.habits.name}</span>
+          <span className="font-medium text-gray-200 text-lg flex items-baseline gap-3">
+            {habit.habits.name}
+            <span className="text-xs text-muted-foreground">
+              <Link href={`/habits/${habit.habits.id}/analysis`} className=" hover:text-primary transition-colors flex items-center gap-1">
+              Learn More <ArrowUpRight className="size-3"/>
+              </Link>
+            </span>  
+          </span>
           <span className={`text-md font-bold ${
             data.consistentDays >= 292 ? "text-green-400" :
             data.consistentDays >= 182 ? "text-yellow-400" : "text-red-400"

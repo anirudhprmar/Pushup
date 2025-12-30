@@ -4,10 +4,9 @@ Habit tracker , where your daily review is shown to others, there's a leaderboar
 
 ## Todo
 
-- [ ]- update how habits are displayed and makred completed. (notes on completion)
-- [ ]- habit analysis perfect
-- [ ]- completely remove the need for /execute
-- [ ]- keep the habits simple to interact with, remove active / start time and completed at time too much crap
+- [X]- update how habits are displayed and makred completed. (notes on completion)
+- [X]- habit analysis perfect
+- [X]- completely remove the need for /execute
 - [ ]- tasks page
 - [ ]- profile page fix
 - [ ]- leaderboard fix

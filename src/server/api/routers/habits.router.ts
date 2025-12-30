@@ -167,7 +167,7 @@ export const habitRouter = createTRPCRouter({
       const ninetyDaysAgo = new Date(today);
       ninetyDaysAgo.setDate(today.getDate() - 90);
 
-      await ctx.db
+      const logs = await ctx.db
         .select()
         .from(habitLogs)
         .where(
@@ -179,6 +179,8 @@ export const habitRouter = createTRPCRouter({
         )
         .orderBy(desc(habitLogs.date))
         .limit(91)
+
+        return logs;  
     }),
     
   getHabitStatistics: protectedProcedure
@@ -205,7 +207,6 @@ export const habitRouter = createTRPCRouter({
 
         const periodLogs = allLogs.filter(log => {
           const logDate = new Date(log.date);
-          logDate.setHours(23, 59, 59, 999);
           return logDate >= periodStart && logDate <= today;
         });
 

@@ -63,16 +63,12 @@ export default function DashboardSideBar() {
   const pathname = usePathname();
   const router = useRouter();
 
+  // /habits/a15e86e8-15df-4025-be19-f052f3b61608/analysis
+  const extendedPathname = pathname?.includes("/habits") ? pathname.slice(0,7) : pathname;
+
   return (
     <div className="min-[1024px]:block hidden group w-18 hover:w-64 border-r h-full bg-background transition-all duration-300 ease-in-out">
       <div className="flex h-full flex-col">
-        {/* Logo Section */}
-        {/*  */}
-
-
-     
-
-
         <nav className="flex flex-col h-full justify-between items-start w-full space-y-1">
           {/* Main Navigation */}
           <div className="w-full space-y-1 p-4">
@@ -82,7 +78,7 @@ export default function DashboardSideBar() {
                 onClick={() => router.push(item.href)}
                 className={clsx(
                   "flex items-center group-hover:justify-start gap-3 w-full rounded-lg px-2.5 group-hover:px-3 py-2 text-sm font-medium transition-all hover:cursor-pointer whitespace-nowrap overflow-hidden",
-                  pathname === item.href
+                  pathname === item.href || extendedPathname === item.href
                     ? "bg-primary/10 text-primary hover:bg-primary/20"
                     : "text-muted-foreground hover:bg-muted hover:text-foreground",
                 )}

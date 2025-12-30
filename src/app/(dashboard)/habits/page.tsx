@@ -1,5 +1,4 @@
 "use client"
-// import { HydrateClient } from "~/trpc/server";
 import { api } from "~/lib/api";
 import { HabitCard } from "~/components/HabitCard";
 import { useRouter } from "next/navigation";
