@@ -153,7 +153,10 @@ export const tasks = createTable(
       .$defaultFn(() => new Date())
       .notNull(),
   }),
-  (t) => [index("user_task_idx").on(t.task)],
+  (t) => [
+    index("user_task_idx").on(t.task),    
+    uniqueIndex("tasks_unique_today").on(t.habitId, t.createdAt)
+],
 )
 
 //might had to update this cause how we store weekly goals or keep track of it

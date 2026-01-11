@@ -1,4 +1,4 @@
-import { and, eq } from 'drizzle-orm';
+import { and, eq, gte, lte } from 'drizzle-orm';
 import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure} from "~/server/api/trpc";
@@ -127,13 +127,24 @@ export const tasksRouter = createTRPCRouter({
         return { success: true };
     }),
 
-    listAllTasks: protectedProcedure
+listAllTasks: protectedProcedure
     .query(async ({ctx}) => {
+
+    const startOfDay = new Date();
+    startOfDay.setHours(0, 0, 0, 0);
+
+    const endOfDay = new Date();
+    endOfDay.setHours(23, 59, 59, 999);
+
         const allTasks = await ctx.db
         .select()
         .from(tasks)
         .where(
-            eq(tasks.userId,ctx.userId)
+            and(
+                eq(tasks.userId,ctx.userId),
+                gte(tasks.createdAt,startOfDay),
+                lte(tasks.createdAt,endOfDay)
+            )
         )
 
          if(!allTasks){

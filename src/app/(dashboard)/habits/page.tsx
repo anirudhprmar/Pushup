@@ -10,7 +10,6 @@ import SkeletonHabits from "./_components/SkeletonHabits";
 
 
 export default function Home() {
- 
 const router = useRouter()
 
 const {data:userHabits,isLoading,error} = api.habits.getHabits.useQuery()
@@ -79,8 +78,8 @@ const {data:userHabits,isLoading,error} = api.habits.getHabits.useQuery()
             </CardContent>
             </Card>
         </div>}
+                {userHabits && userHabits?.length === 0 ? <div>No habits found. Start by creating a new habit!</div> : null}
 
-        {userHabits && userHabits?.length === 0 ? <div>No habits found. Start by creating a new habit!</div> : null}
       </div>
     </main>
   )

@@ -43,6 +43,13 @@
       "when": 1767352439662,
       "tag": "0005_orange_lady_bullseye",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1768112073184,
+      "tag": "0006_tiny_the_stranger",
+      "breakpoints": true
     }
   ]
 }

@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX "tasks_unique_today" ON "pushup_tasks" USING btree ("habit_id","created_at");
