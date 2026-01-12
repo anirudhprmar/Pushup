@@ -20,7 +20,6 @@ export function AnimatedCheckTasks({taskId,habitId,checkedStatus}:{taskId:string
       await markCompleted.mutateAsync({
         taskId,
         habitId,
-        notes:"testing123",
         completed:true
       })
       setIsChecked(true)

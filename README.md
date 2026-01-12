@@ -4,13 +4,16 @@ Habit tracker , where your daily review is shown to others, there's a leaderboar
 
 ## Todo
 
+
+- [ ]- task operations start and completed (also form fix)
 - [ ]- profile page fix (show previous completed tasks too)
-- [ ]- habits analysis page errors and notes on habit completion
+- [ ]- habits analysis page errors and notes on habit / task completion
 - [ ]- implement redis rate limiting and caching.
 - [ ]- redo the landing page and login page (keep just a login card)
 - [ ]- optimize code to server side render, reduce client side code.
 - [ ]- re-deploy to vercel with all the envs
 
+_____
 - [ ]- leaderboard fix
 - [ ]- weekly goals page
 - [ ]- goals page

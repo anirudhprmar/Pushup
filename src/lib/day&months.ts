@@ -53,7 +53,7 @@ switch (month) {
 }
 
 export default function dateAndactualMonth(input:string){
-    const date = input.split("/")[1];
+    const date = input.split("-")[2];
     const properDateAndactualMonth = `${date} ${actualMonth}`;
     return properDateAndactualMonth;
 }

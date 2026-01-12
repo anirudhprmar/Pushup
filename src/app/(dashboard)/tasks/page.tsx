@@ -5,6 +5,7 @@ import { api } from "~/lib/api"
 import { TaskForm } from "./_components/TaskForm";
 import { TaskCard } from "./_components/TaskCard";
 import SkeletonTasks from "./_components/SkeletonTasks";
+import dateAndactualMonth from "~/lib/day&months";
 
 
 export default function Tasks() {
@@ -18,6 +19,9 @@ export default function Tasks() {
   
     if(!userTasks) return;
 
+    const date = new Date().toISOString().split("T")[0]!;
+    const todaysDate = dateAndactualMonth(date)
+    console.log(date)
   return (
     <main className="min-h-screen bg-background">
       <div className="max-w-4xl mx-auto px-4 py-8">
@@ -34,7 +38,7 @@ export default function Tasks() {
           <Card className="bg-secondary w-full max-w-4xl">
               <CardHeader>
               <CardTitle className="text-lg font-medium ">
-                  Todays Tasks
+                  {todaysDate}
                 </CardTitle>
             </CardHeader>
           <CardContent>

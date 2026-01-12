@@ -31,11 +31,11 @@ export const tasksRouter = createTRPCRouter({
           taskId:z.uuid(),
           habitId:z.uuid(),
           completed:z.boolean(),
-          notes:z.string().optional(),
         }))
         .mutation(async({ctx,input})=>{
-            
-        const [task] = await ctx.db
+        const today = new Date().toISOString().split('T')[0]!; 
+
+        const task = await ctx.db
         .select()
         .from(tasks)
         .where(
@@ -48,11 +48,11 @@ export const tasksRouter = createTRPCRouter({
         if(!task){
             return {status:"no task exist"}
         }
-        const updatedTask = await ctx.db
+
+        await ctx.db
         .update(tasks)
         .set({
             completed:input.completed,
-            notes:input.notes ?? null,
             completedAt:new Date()
         })
         .where(
@@ -62,11 +62,19 @@ export const tasksRouter = createTRPCRouter({
             )
         )
         .returning()
-        //Fix this
-        if(input.habitId === undefined) return;
-        await ctx.db.update(habitLogs).set({completed:true}).where(eq(habitLogs.habitId,input.habitId))
         
-        return {success:true,task:updatedTask}
+        if(input.habitId === undefined) return;
+
+            await ctx.db
+            .insert(habitLogs)
+            .values({
+                habitId:input.habitId,
+                date: today,
+                completed: true,
+            })
+    
+        
+        return {success:true}
         })
         ,
 

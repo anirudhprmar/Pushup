@@ -57,7 +57,7 @@ export function HabitsProgressList({habit}: {habit: HabitProps}) {
         className="space-y-1.5"
       >
         <div className="flex items-center justify-between text-sm">
-          <span className="font-medium text-gray-200 text-lg flex items-baseline gap-3">
+          <span className="font-medium text-foreground text-lg flex items-baseline gap-3">
             {habit.habits.name}
             <span className="text-xs text-muted-foreground">
               <Link href={`/habits/${habit.habits.id}/analysis`} className=" hover:text-primary transition-colors flex items-center gap-1">

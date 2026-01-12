@@ -1,0 +1,1 @@
+ALTER TABLE "pushup_tasks" DROP COLUMN "notes";

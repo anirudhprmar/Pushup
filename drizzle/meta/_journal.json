@@ -50,6 +50,13 @@
       "when": 1768112073184,
       "tag": "0006_tiny_the_stranger",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1768221861650,
+      "tag": "0007_productive_energizer",
+      "breakpoints": true
     }
   ]
 }

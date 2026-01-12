@@ -145,7 +145,6 @@ export const tasks = createTable(
     completed:d.boolean("completed").default(false).notNull(),
     targetValue: d.integer("target_value"), 
     targetUnit: d.text("target_unit"), 
-    notes:d.text("notes"),
     createdAt: d.timestamp("created_at")
       .$defaultFn(() => new Date())
       .notNull(),

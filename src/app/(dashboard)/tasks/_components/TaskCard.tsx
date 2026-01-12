@@ -1,5 +1,6 @@
 "use client"
 
+import { Timer } from "lucide-react";
 import { AnimatedCheckTasks } from "./AnimatedCheckTasks";
 import SkeletonTasks from "./SkeletonTasks";
 
@@ -13,7 +14,6 @@ interface TaskProps {
   completed: boolean
   targetValue:number | null 
   targetUnit:string | null
-  notes:string | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -38,9 +38,6 @@ export function TaskCard({
 
       <div className="relative p-2 space-y-4">
           <div className="flex items-start justify-between gap-2">
-
-              <div className="flex items-center gap-2">
-
                 <div className="flex items-center justify-center gap-2 ">
 
                     <AnimatedCheckTasks taskId={userTask.id} habitId={userTask.habitId ?? ""} checkedStatus={userTask?.completed ?? false} />
@@ -51,11 +48,10 @@ export function TaskCard({
                         <span className="absolute inset-0 h-0.2 bg-destructive top-1/2 -translate-y-1/2 origin-left scale-x-100 " />
                       )}
                     </span>
+
                 </div>
-              </div>
-                          
-             
-            
+
+                <Timer/>
           </div>
         </div>
     </div>
