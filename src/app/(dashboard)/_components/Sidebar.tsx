@@ -4,14 +4,11 @@ import UserProfile from "~/components/user-profile";
 import clsx from "clsx";
 import {
   type LucideIcon,
-  BarChart,
   Settings,
   Bell,
   UserIcon,
   ListTodo,
-  TargetIcon,
   TreeDeciduousIcon,
-  Flame,
 } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 
@@ -95,10 +92,10 @@ export default function DashboardSideBar() {
           <div className="flex flex-col gap-2 w-full">
             <div className="px-4">
               <div
-                onClick={() => router.push("/settings")}
+                onClick={() => router.push("/notifications")}
                 className={clsx(
                   "flex items-center group-hover:justify-start w-full gap-3 rounded-lg px-2.5 group-hover:px-3 py-2 text-sm font-medium transition-all hover:cursor-pointer whitespace-nowrap overflow-hidden",
-                  pathname === "/settings"
+                  pathname === "/notifications"
                     ? "bg-primary/10 text-primary hover:bg-primary/20"
                     : "text-muted-foreground hover:bg-muted hover:text-foreground",
                 )}

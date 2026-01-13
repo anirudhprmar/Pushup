@@ -1,14 +1,9 @@
 import { api, HydrateClient } from "~/trpc/server";
-import TodaysProgress from "./_components/TodaysProgress";
-
-import { ReviewNotes } from "./_components/ReviewNotes";
 
 import { redirect } from "next/navigation";
 import HabitVisualizer from "../habits/_components/HabitVisualizer";
-import dateAndactualMonth from "~/lib/day&months";
-import { Progress } from "~/components/ui/progress";
 import UserProgress from "./_components/UserProgress";
-import { Card } from "~/components/ui/card";
+
 
 export default async function profile() {
 

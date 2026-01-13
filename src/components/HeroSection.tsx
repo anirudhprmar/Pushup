@@ -1,6 +1,5 @@
 "use client"
 import React from 'react'
-import { Button } from './ui/button'
 import {motion} from "motion/react"
 import Link from 'next/link'
 import CTAButton from './CTAButton'
@@ -14,7 +13,7 @@ export default function HeroSection() {
     
   return (
     <section className="relative w-full pt-5 pb-32 md:pb-48 isolate">
-        <div className="absolute inset-0 -z-10 h-full w-full bg-white bg-[linear-gradient(to_right,#f0f0f0_1px,transparent_1px),linear-gradient(to_bottom,#f0f0f0_1px,transparent_1px)] bg-[length:6rem_4rem] mask-image:radial-gradient(ellipse_at_center,black,transparent)">
+        <div className="absolute inset-0 -z-10 h-full w-full bg-white bg-[linear-gradient(to_right,#f0f0f0_1px,transparent_1px),linear-gradient(to_bottom,#f0f0f0_1px,transparent_1px)] bg-size-[6rem_4rem] mask-image:radial-gradient(ellipse_at_center,black,transparent)">
         </div>
         
         <div className="max-w-7xl mx-auto px-6 lg:px-8 flex items-start justify-center py-5 gap-3">
@@ -80,7 +79,7 @@ export default function HeroSection() {
             </div>
 
             {/* Stats */}
-            <div className="hidden grid grid-cols-3 gap-8 mt-20 max-w-2xl mx-auto">
+            <div className="hidden grid-cols-3 gap-8 mt-20 max-w-2xl mx-auto">
               <div className="text-center">
                 <div className="text-4xl font-black mb-2">365</div>
                 <div className="text-sm text-black/60 font-medium">Days Challenge</div>
