@@ -8,7 +8,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 import { toast } from "sonner";
-import Image from "next/image";
+import { Card, CardContent } from "~/components/ui/card";
 
 function SignInContent() {
   const [loading, setLoading] = useState(false);
@@ -16,28 +16,23 @@ function SignInContent() {
   const returnTo = searchParams.get("returnTo");
 
   return (
-    <div className="flex flex-col lg:flex-row min-h-screen">
-      <div className="flex-1 flex flex-col items-center justify-center gap-5 p-6 md:p-10 lg:p-12 bg-background">
-        {/* Header */}
-      <div className="flex flex-col gap-8 ">
+
+        <div className="min-h-screen relative w-full bg-black flex flex-col items-center justify-center overflow-hidden py-6 md:py-12">
+        
+      <div className="flex flex-col gap-4 absolute md:top-10 top-6 items-center md:items-start px-4 md:px-0">
         <Link
               prefetch={true}
               className="inline-flex items-center gap-2 hover:opacity-80 transition-opacity"
               href="/"
             >
-              <Image
-                src="/logo.png"
-                alt="PushUp Logo"
-                width={32}
-                height={32}
-                className="rounded-md w-10 h-10 drop-shadow-lg"
-              />
         </Link>
-          <h1 className="text-3xl md:text-4xl text-foreground font-semibold">Welcome to PushUp</h1>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl tracking-wide text-foreground font-semibold text-center md:text-left">Welcome to PushUp</h1>
 
       </div>
-      {/* Auth Card */}
-      <div className="w-full max-w-sm space-y-6">
+    <div className="flex items-center justify-center w-full px-4 mt-8 md:mt-0">
+      <Card>
+        <CardContent>
+        <div className="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg space-y-6">
      
     <Button
       variant="outline"
@@ -59,7 +54,6 @@ function SignInContent() {
               },
               onError: (ctx) => {
                 setLoading(false);
-                // Add user-friendly error handling here
                 console.error("Sign-in failed:", ctx.error);
               },
             },
@@ -116,13 +110,13 @@ function SignInContent() {
             Privacy Policy
           </Link>
         </p>
-      </div>
+        </div>
+        </CardContent>
+      </Card>
 
-      </div>
+    </div>
 
-      <div className="hidden lg:flex flex-1 relative bg-linear-to-br from-primary/10 via-background to-background  items-center justify-center rounded-3xl m-4">
-        <div className="absolute inset-0 overflow-hidden rounded-3xl"></div>
-      </div>
+    
     </div>
   );
 }
