@@ -6,16 +6,16 @@ export default function Footer() {
   return (
     <footer >
       <div className="mx-auto max-w-6xl px-6 py-12 lg:px-8 lg:py-16">
-        <div className="flex items-start justify-between ">
+        <div className="flex flex-col md:flex-row items-start justify-between ">
           {/* Logo */}
           <div className="mb-12">
             <Link href="/" className="inline-block">
-              <span className="text-2xl font-bold text-foreground">PushUp</span>
+              <span className="text-2xl font-bold text-gra-800">PushUp</span>
             </Link>
           </div>
 
           {/* Links Grid */}
-          <div className="grid grid-cols-2 gap-8 md:gap-12 mb-16">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 mb-16">
             {/* Product */}
             <div>
               <h3 className="text-sm font-semibold text-foreground mb-4">Product</h3>
