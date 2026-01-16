@@ -9,7 +9,7 @@ export const siteConfig = {
   description: "Transform your life with the all-or-nothing habit tracker. Track 365 days of consistency, visualize progress, and build habits that truly last.",
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://pushup.life",
   ogImage: "/og-default.png",
-  // twitterHandle: "@pushupapp",
+  twitterHandle: "@anirudhprmar",
   locale: "en_US",
   themeColor: "#6366f1",
   
