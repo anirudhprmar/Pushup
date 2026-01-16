@@ -75,7 +75,6 @@ export function TaskForm() {
       await trpc.tasks.invalidate()
     }
   })
-  //habitId : links tasks to that habit, if that task related to that habit is completed then we can use that to update habit log with completed true.
   const onSubmit: SubmitHandler<z.infer<typeof formSchema>> = async (data) => {
     try {
       const createTask = await create.mutateAsync({
@@ -123,7 +122,7 @@ export function TaskForm() {
           <DialogHeader>
             <DialogTitle>Create New Task</DialogTitle>
           </DialogHeader>
-          <form id="habit-form" onSubmit={form.handleSubmit(onSubmit)}>
+          <form id="task-form" onSubmit={form.handleSubmit(onSubmit)}>
             <FieldGroup>
 
               <Controller
@@ -223,8 +222,8 @@ export function TaskForm() {
             <DialogClose asChild>
               <Button variant="outline">Cancel</Button>
             </DialogClose>
-            <Button type="submit" form="habit-form" disabled={create.isPending}>
-              {create.isPending ? "Creating..." : "Create Habit"}
+            <Button type="submit" form="task-form" disabled={create.isPending}>
+              {create.isPending ? "Creating..." : "Create Task"}
             </Button>
           </DialogFooter>
         </DialogContent>
