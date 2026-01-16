@@ -64,22 +64,32 @@ export default function Settings() {
     }, 1000)
   }
   
+  const { refetch: fetchExportData } = api.user.exportData.useQuery(undefined, {
+    enabled: false,
+  })
+  const deleteAccountMutation = api.user.deleteAccount.useMutation()
+  
   const handleExportData = async () => {
-    // TODO: Implement data export functionality
-    const data = {
-      user: user,
-      exportDate: new Date().toISOString(),
+    try {
+      const { data: exportedData, error } = await fetchExportData()
+      
+      if (error) {
+        console.error('Failed to export data:', error)
+        return
+      }
+
+      const blob = new Blob([JSON.stringify(exportedData, null, 2)], { type: 'application/json' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `user-data-${new Date().toISOString().split('T')[0]}.json`
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      URL.revokeObjectURL(url)
+    } catch (err) {
+      console.error('Export error:', err)
     }
-    
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `user-data-${new Date().toISOString().split('T')[0]}.json`
-    document.body.appendChild(a)
-    a.click()
-    document.body.removeChild(a)
-    URL.revokeObjectURL(url)
   }
   
   const handleDeleteAccount = async () => {
@@ -90,11 +100,9 @@ export default function Settings() {
     setIsDeleting(true)
     
     try {
-      // TODO: Implement account deletion API endpoint
-      // This should delete all user data, sessions, and sign them out
-      await new Promise(resolve => setTimeout(resolve, 2000)) // Simulating API call
+      await deleteAccountMutation.mutateAsync()
       
-      // Sign out the user
+      // Sign out the user using better-auth client
       await authClient.signOut({
         fetchOptions: {
           onSuccess: () => {
