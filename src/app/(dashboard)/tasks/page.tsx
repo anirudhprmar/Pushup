@@ -25,40 +25,41 @@ export default function Tasks() {
   return (
     <main className="min-h-screen bg-background">
       <div className="max-w-4xl mx-auto px-4 py-8">
-        <div className="mb-8 ">
+        <header className="mb-8">
           <div className="w-full flex justify-between items-center">
-            <h1 className="text-2xl font-bold text-foreground">
-              <p>Tasks</p>
-            </h1>
-              <TaskForm/>
+            <h1 className="text-2xl font-bold text-foreground">Tasks</h1>
+            <TaskForm />
           </div>
-        </div>
+        </header>
 
-        {isLoading ? <SkeletonTasks/> : <div className="space-y-6"> 
-          <Card className="bg-secondary w-full max-w-4xl">
-              <CardHeader>
-              <CardTitle className="text-lg font-medium ">
-                  {todaysDate}
-                </CardTitle>
-            </CardHeader>
-          <CardContent>
-
-              { userTasks && userTasks?.length === 0 ? <div>No Tasks found. Start by creating a new task!</div> : null}
-            <div className="grid grid-cols-1 gap-2">
-              {
-                userTasks?.map((task) => (
-                  <TaskCard 
-                  key={task.id}
-                  userTask={task}
-                  />
-                  
-                ))
-              }
-            </div>
-          </CardContent>
-          </Card>
-        </div>}
-
+        {isLoading ? (
+          <SkeletonTasks />
+        ) : (
+          <div className="space-y-6">
+            <section aria-labelledby="today-tasks-title">
+              <Card className="bg-secondary w-full max-w-4xl">
+                <CardHeader>
+                  <CardTitle id="today-tasks-title" className="text-lg font-medium">
+                    {todaysDate}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {!userTasks || userTasks.length === 0 ? (
+                    <p className="text-muted-foreground">No Tasks found. Start by creating a new task!</p>
+                  ) : (
+                    <ul className="grid grid-cols-1 gap-2">
+                      {userTasks.map((task) => (
+                        <li key={task.id}>
+                          <TaskCard userTask={task} />
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </CardContent>
+              </Card>
+            </section>
+          </div>
+        )}
       </div>
     </main>
   )

@@ -133,28 +133,29 @@ export default function Settings() {
   }
   
   return (
-    <main className="min-h-screen bg-background">
+    <main className="min-h-screen bg-background text-foreground">
       <div className="mx-auto max-w-4xl px-4 py-8">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold text-foreground">Settings</h1>
+        <header className="mb-8">
+          <h1 className="text-2xl font-bold">Settings</h1>
           <p className="text-sm text-muted-foreground">
             Manage your account settings and preferences
           </p>
-        </div>
+        </header>
         
         <div className="space-y-6">
           {/* Account Settings */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <User className="h-5 w-5 text-primary" />
-                Account Information
-              </CardTitle>
-              <CardDescription>
-                Update your personal information and email address
-              </CardDescription>
-            </CardHeader>
+          <section aria-labelledby="account-settings-title">
+            <Card>
+              <CardHeader>
+                <CardTitle id="account-settings-title" className="flex items-center gap-2">
+                  <User className="h-5 w-5 text-primary" aria-hidden="true" />
+                  Account Information
+                </CardTitle>
+                <CardDescription>
+                  Update your personal information and email address
+                </CardDescription>
+              </CardHeader>
             <CardContent className="space-y-6">
               {/* Profile Picture */}
               <div className="flex items-center gap-4">
@@ -225,12 +226,14 @@ export default function Settings() {
               </div>
             </CardContent>
           </Card>
-          
-          {/* Appearance Settings */}
+        </section>
+        
+        {/* Appearance Settings */}
+        <section aria-labelledby="appearance-settings-title">
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Palette className="h-5 w-5 text-primary" />
+              <CardTitle id="appearance-settings-title" className="flex items-center gap-2">
+                <Palette className="h-5 w-5 text-primary" aria-hidden="true" />
                 Appearance
               </CardTitle>
               <CardDescription>
@@ -266,12 +269,14 @@ export default function Settings() {
               </div>
             </CardContent>
           </Card>
-          
-          {/* Privacy & Data */}
+        </section>
+        
+        {/* Privacy & Data */}
+        <section aria-labelledby="privacy-settings-title">
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Shield className="h-5 w-5 text-primary" />
+              <CardTitle id="privacy-settings-title" className="flex items-center gap-2">
+                <Shield className="h-5 w-5 text-primary" aria-hidden="true" />
                 Privacy & Data
               </CardTitle>
               <CardDescription>
@@ -306,12 +311,14 @@ export default function Settings() {
               </div>
             </CardContent>
           </Card>
-          
-          {/* Danger Zone */}
+        </section>
+        
+        {/* Danger Zone */}
+        <section aria-labelledby="danger-zone-title">
           <Card className="border-destructive">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-destructive">
-                <AlertTriangle className="h-5 w-5" />
+              <CardTitle id="danger-zone-title" className="flex items-center gap-2 text-destructive">
+                <AlertTriangle className="h-5 w-5" aria-hidden="true" />
                 Danger Zone
               </CardTitle>
               <CardDescription>
@@ -395,7 +402,8 @@ export default function Settings() {
               </Dialog>
             </CardContent>
           </Card>
-        </div>
+        </section>
+      </div>
       </div>
     </main>
   )

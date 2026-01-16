@@ -24,19 +24,19 @@ export default function LeaderboardPage() {
   const restOfLeaderboard = leaderboardData?.slice(3) ?? []
 
   return (
-    <div className="min-h-screen bg-background text-foreground p-6 md:p-12 space-y-12">
+    <main className="min-h-screen bg-background text-foreground p-6 md:p-12 space-y-12">
       {/* Header Section */}
-      <div className="text-center space-y-4 mx-auto">
+      <header className="text-center space-y-4 mx-auto">
         <h1 className="text-6xl md:text-6xl font-bold tracking-tight bg-linear-to-r from-primary to-blue-500 bg-clip-text text-transparent pb-2">
           Community Leaderboard
         </h1>
         <p className="text-muted-foreground text-lg">
           See who&apos;s staying consistent and crushing their goals. Consistency is key!
         </p>
-      </div>
+      </header>
 
       {/* Podium Section (Top 3) */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto items-end">
+      <section aria-label="Top three performers" className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto items-end">
         {/* 2nd Place */}
         {topThree[1] && <PodiumCard user={topThree[1]} place={2} />}
         
@@ -45,21 +45,25 @@ export default function LeaderboardPage() {
         
         {/* 3rd Place */}
         {topThree[2] && <PodiumCard user={topThree[2]} place={3} />}
-      </div>
+      </section>
 
       {/* List Section */}
-      <div className="max-w-4xl mx-auto space-y-4">
+      <section aria-label="Leaderboard rankings" className="max-w-4xl mx-auto space-y-4">
         <div className="flex items-center justify-between px-6 py-2 text-sm text-muted-foreground font-medium uppercase tracking-wider">
           <div className="w-16 text-center">Rank</div>
           <div className="flex-1">User</div>
           <div className="w-24 text-center hidden md:block">Total Days</div>
          </div>
         
-        {restOfLeaderboard.map((user, index) => (
-          <LeaderboardRow key={user.id} user={user} rank={index + 4} />
-        ))}
-      </div>
-    </div>
+        <ul className="space-y-4">
+          {restOfLeaderboard.map((user, index) => (
+            <li key={user.id}>
+              <LeaderboardRow user={user} rank={index + 4} />
+            </li>
+          ))}
+        </ul>
+      </section>
+    </main>
   )
 }
 

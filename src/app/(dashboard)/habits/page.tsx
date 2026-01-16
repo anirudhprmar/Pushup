@@ -23,63 +23,63 @@ const {data:userHabits,isLoading,error} = api.habits.getHabits.useQuery()
   return (
     <main className="min-h-screen bg-background">
       <div className="max-w-4xl mx-auto px-4 py-8">
-        <div className="mb-8 ">
+        <header className="mb-8">
           <div className="w-full flex justify-between items-center">
-            <h1 className="text-2xl font-bold text-foreground">
-              <p>Habits</p>
-            </h1>
-              <HabitForm/>
+            <h1 className="text-2xl font-bold text-foreground">Habits</h1>
+            <HabitForm />
           </div>
-        </div>
+        </header>
     
-        {isLoading ? <SkeletonHabits/> : <div className="space-y-6">
-            <Card className="bg-secondary w-full max-w-4xl">
+        {isLoading ? (
+          <SkeletonHabits />
+        ) : (
+          <div className="space-y-6">
+            <section aria-labelledby="current-habits-title">
+              <Card className="bg-secondary w-full max-w-4xl">
                 <CardHeader>
-                <CardTitle className="text-lg font-medium flex items-center gap-2">
-                  <TreeDeciduous className="text-primary"/>
-                  Current Habits
+                  <CardTitle id="current-habits-title" className="text-lg font-medium flex items-center gap-2">
+                    <TreeDeciduous className="text-primary" aria-hidden="true" />
+                    Current Habits
                   </CardTitle>
-              </CardHeader>
-            <CardContent>
-
-              <div className="grid grid-cols-1 gap-2">
-                {
-                  userHabits.map((habit) => (
-                    <HabitCard 
-                    key={habit.habits.id}
-                    habit={habit}
-                    />
-                  ))
-                }
-              </div>
-            </CardContent>
-            </Card>
+                </CardHeader>
+                <CardContent>
+                  {userHabits.length === 0 ? (
+                    <p className="text-muted-foreground p-4">No habits found. Start by creating a new habit!</p>
+                  ) : (
+                    <ul className="grid grid-cols-1 gap-2">
+                      {userHabits.map((habit) => (
+                        <li key={habit.habits.id}>
+                          <HabitCard habit={habit} />
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </CardContent>
+              </Card>
+            </section>
              
-            <Card className="bg-secondary w-full max-w-4xl">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-lg font-medium flex items-center gap-2">
-                  <Activity className="w-4 h-4 text-primary" />
-                  Habit Consistency
-                  <span className="text-xs font-normal text-muted-foreground ml-auto">over 365 days</span>
-                </CardTitle>
-              </CardHeader>
-            <CardContent>
-
-              <div className="grid grid-cols-1 gap-2">
-                {
-                  userHabits.map((habit) => (
-                    <HabitsProgressList 
-                    key={habit.habits.id}
-                    habit={habit}
-                    />
-                  ))
-                }
-              </div>
-            </CardContent>
-            </Card>
-        </div>}
-                {userHabits && userHabits?.length === 0 ? <div>No habits found. Start by creating a new habit!</div> : null}
-
+            <section aria-labelledby="habit-consistency-title">
+              <Card className="bg-secondary w-full max-w-4xl">
+                <CardHeader className="pb-2">
+                  <CardTitle id="habit-consistency-title" className="text-lg font-medium flex items-center gap-2">
+                    <Activity className="w-4 h-4 text-primary" aria-hidden="true" />
+                    Habit Consistency
+                    <span className="text-xs font-normal text-muted-foreground ml-auto">over 365 days</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ul className="grid grid-cols-1 gap-2">
+                    {userHabits.map((habit) => (
+                      <li key={habit.habits.id}>
+                        <HabitsProgressList habit={habit} />
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+              </Card>
+            </section>
+          </div>
+        )}
       </div>
     </main>
   )

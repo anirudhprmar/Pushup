@@ -74,9 +74,9 @@ export function MobileHabitForm() {
   const habitType = form.watch("habitType");
 
   const trpc = api.useUtils();
-  const create = api.habits.create.useMutation({
+  const create = api.habits.createHabit.useMutation({
     onSuccess: async () => {
-      await trpc.habit.invalidate();
+      await trpc.habits.invalidate();
     },
   });
 
@@ -84,13 +84,11 @@ export function MobileHabitForm() {
     try {
       const createHabit = await create.mutateAsync({
         name: data.name,
-        goal: data.goal,
+        // Mapping goal string to goalId null for now to match router schema
+        goalId: undefined, 
         description: data.description,
         category: data.category,
         color: data.color,
-        habitType: data.habitType,
-        targetValue: data.targetValue,
-        targetUnit: data.targetUnit,
       });
 
       if (createHabit) {

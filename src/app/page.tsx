@@ -6,16 +6,14 @@ import Navbar from "~/components/Navbar"
 import Footer from "~/components/Footer"
 import LandingCTA from "~/components/LandingCTA"
 import FAQ from "~/components/FAQ"
-import Demo from "~/components/Demo"
+// import Demo from "~/components/Demo"
 
 export default function Landing() {
   return (
     <div className="light relative min-h-full overflow-hidden w-full bg-white text-slate-900 selection:bg-blue-100 selection:text-blue-900">
 
-      <header aria-labelledby="site-nav" className="w-full">
-        <nav id="site-nav">
-          <Navbar />
-        </nav>
+      <header className="w-full">
+        <Navbar />
       </header>
 
       <main id="main" role="main" aria-labelledby="main-heading" className="w-full">
