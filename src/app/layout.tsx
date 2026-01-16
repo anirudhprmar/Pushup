@@ -38,6 +38,11 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "Pushup" }],
   creator: "Pushup",
+  icons:{
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/favicon.ico", 
+  },
   openGraph: {
     type: "website",
     locale: "en_US",
@@ -47,7 +52,7 @@ export const metadata: Metadata = {
     description: "Transform your life with the all-or-nothing habit tracker. Track 365 days of consistency and build habits that truly last.",
     images: [
       {
-        url: "/og-default.png",
+        url: "https://163jz9wo57.ufs.sh/f/LDDo8gC5wt4WE1qKrRABsleDQnuFANY4jq23LXOVh687zMKT",
         width: 1200,
         height: 630,
         alt: "Pushup - 365-Day Habit Tracker",
@@ -58,8 +63,8 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Pushup - Build Habits That Last",
     description: "Transform your life with the all-or-nothing habit tracker.",
-    images: ["/og-default.png"],
-    creator: "@pushupapp",
+    images: ["/favicon.ico"],
+    creator: "@anirudhprmar",
   },
   robots: {
     index: true,
