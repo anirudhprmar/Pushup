@@ -4,7 +4,7 @@ Habit tracker , where your daily review is shown to others, there's a leaderboar
 
 ## Todo
 
-- [ ]- notes on habit / task completion
+- [X]- notes on habit / task completion
 
 _____
 - [ ]- leaderboard fix

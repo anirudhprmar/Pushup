@@ -4,9 +4,11 @@ import { motion, AnimatePresence } from "motion/react";
 import { useState } from "react";
 import { ConfettiCelebration } from "./ConfettiCelebration";
 import { api } from "~/lib/api";
+import { ModalNotes } from "./ModalNotes";
 
 export function AnimatedCheck({habitId,checkedStatus}:{habitId:string, checkedStatus?:boolean}) {
   const [isChecked,setIsChecked] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
     const trpc = api.useUtils()
     const markCompleted = api.habits.setHabitCompleted.useMutation({
@@ -16,19 +18,23 @@ export function AnimatedCheck({habitId,checkedStatus}:{habitId:string, checkedSt
       }
     })
     
-    const handleCheck = async()=>{
+    const handleCheckClick = () => {
+      if (!isChecked && !checkedStatus) {
+        setIsModalOpen(true)
+      }
+    }
+
+    const handleSaveNotes = async (notes: string) => {
       await markCompleted.mutateAsync({
         habitId,
-        notes:"testing123",
-        completed:true
+        notes: notes || undefined,
+        completed: true
       })
       setIsChecked(true)
     }
 
   return (
     <div className="relative w-6 h-6">
-      {/* click off update the database with not completed */}
-
       <AnimatePresence mode="wait">
         {isChecked || checkedStatus ? (
           <motion.div
@@ -52,10 +58,19 @@ export function AnimatedCheck({habitId,checkedStatus}:{habitId:string, checkedSt
             exit={{ scale: 0.8, opacity: 0 }}
             transition={{ duration: 0.1 }}
           >
-            <div onClick={handleCheck} className="w-6 h-6 rounded-lg border-2 border-gray-300 bg-transparent cursor-pointer transition-colors"></div>
+            <div 
+              onClick={handleCheckClick} 
+              className="w-6 h-6 rounded-lg border-2 border-gray-300 bg-transparent cursor-pointer transition-colors hover:border-primary/50"
+            />
           </motion.div>
         )}
       </AnimatePresence>
+
+      <ModalNotes 
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSave={handleSaveNotes}
+      />
 
       <ConfettiCelebration trigger={isChecked} color={"#3b82f6"} />
     </div>
