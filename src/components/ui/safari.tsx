@@ -81,7 +81,7 @@ export function Safari({
           <Image
             src={imageSrc}
             alt="Dashboard Preview"
-            className="block size-full object-cover object-top"
+            className="block size-full object-contain object-top"
             width={1200}
             height={900}
             priority

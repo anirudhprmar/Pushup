@@ -20,14 +20,14 @@ export default function HeroSection() {
           
 
             {/* Main Heading */}
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-medium mb-6 leading-tight tracking-tight text-secondary">
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-medium mb-6 leading-tight tracking-tight text-slate-900">
               Organize your
               <br />
               <span className='font-serif italic'>habits</span> and <span className="font-serif italic">life.</span>
             </h1>
 
             {/* Subheading */}
-            <p className="text-lg md:text-xl text-muted-foreground mb-10 max-w-2xl">
+            <p className="text-lg md:text-xl text-slate-600 mb-10 max-w-2xl">
               Simplify life for both you and your team.
               <br />
               The most productive habit tracker app.

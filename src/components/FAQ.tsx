@@ -42,11 +42,11 @@ export default function FAQ() {
       <div className="max-w-3xl mx-auto px-6 lg:px-8">
         {/* Heading */}
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-5xl font-semibold mb-4 font-serif">
+          <h2 className="text-3xl md:text-5xl font-semibold mb-4 font-serif text-slate-900">
             Clear information to help you get{" "}
             <span className="text-primary">started with confidence</span>
           </h2>
-          <p className="text-lg text-muted-foreground">
+          <p className="text-lg text-slate-600">
             Everything you need to know before starting your habit tracking journey
           </p>
         </div>
@@ -57,12 +57,12 @@ export default function FAQ() {
             <AccordionItem 
               key={faq.id} 
               value={faq.id}
-              className="border border-border rounded-xl px-6 py-2 bg-white hover:border-primary/50 transition-colors"
+              className="border border-slate-200 rounded-xl px-6 py-2 bg-white hover:border-primary/50 transition-colors"
             >
-              <AccordionTrigger className="text-lg font-semibold text-foreground hover:no-underline">
+              <AccordionTrigger className="text-lg font-semibold text-slate-900 hover:no-underline">
                 {faq.question}
               </AccordionTrigger>
-              <AccordionContent className="text-muted-foreground leading-relaxed h-full">
+              <AccordionContent className="text-slate-600 leading-relaxed h-full">
                 {faq.answer}
               </AccordionContent>
             </AccordionItem>

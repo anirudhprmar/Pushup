@@ -10,7 +10,7 @@ import Demo from "~/components/Demo"
 
 export default function Landing() {
   return (
-    <div className="relative min-h-full overflow-hidden w-full ">
+    <div className="light relative min-h-full overflow-hidden w-full bg-white text-slate-900 selection:bg-blue-100 selection:text-blue-900">
 
       <header aria-labelledby="site-nav" className="w-full">
         <nav id="site-nav">

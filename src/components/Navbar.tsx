@@ -15,9 +15,9 @@ export default function Navbar() {
   return (
     <nav
       className={`
-        fixed  top-0 z-50 w-full border 
+        fixed  top-0 z-50 w-full border-b border-slate-100
         transition-all duration-300 ease-in-out
-        ${isMenuOpen ? 'bg-white' : 'bg-transparent backdrop-blur-md'}
+        ${isMenuOpen ? 'bg-white' : 'bg-white/80 backdrop-blur-md'}
       `}
     >
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
@@ -27,12 +27,12 @@ export default function Navbar() {
           
           {/* Logo */}
           <div className="flex items-center">
-            <span className="text-xl font-bold tracking-tight text-secondary">PushUp</span>
+            <span className="text-xl font-bold tracking-tight text-slate-900">PushUp</span>
           </div>
 
           {/* Desktop Nav (Hidden on Mobile) */}
           <div className="hidden md:flex md:items-center md:gap-8">
-            <ul className="flex gap-6 text-sm font-medium text-gray-600">
+            <ul className="flex gap-6 text-sm font-medium text-slate-600">
               <li className="hover:text-black cursor-pointer transition-colors">Features</li>
               <li className="hover:text-black cursor-pointer transition-colors">Demo</li>
               {/* <li className="hover:text-black cursor-pointer transition-colors">Pricing</li> */}

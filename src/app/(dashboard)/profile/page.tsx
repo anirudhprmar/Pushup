@@ -22,7 +22,7 @@ export default async function profile() {
       <div className="min-h-screen ">
         <div className=" mx-auto max-w-4xl p-3 ">
         
-        <div className="flex items-center justify-around gap-2">
+        <div className="flex items-center justify-between gap-2">
             <h1 className="font-bold text-3xl">Hi!, {user.name.split(" ")[0]}</h1>
             <p className="text-3xl text-muted-foreground tracking-tighter">{year}</p>
         </div>
