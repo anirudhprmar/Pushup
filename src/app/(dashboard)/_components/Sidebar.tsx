@@ -11,6 +11,7 @@ import {
   TreeDeciduousIcon,
 } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
+import { api } from "~/lib/api";
 
 interface NavItem {
   label: string;
@@ -59,6 +60,7 @@ const navItems: NavItem[] = [
 export default function DashboardSideBar() {
   const pathname = usePathname();
   const router = useRouter();
+  const { data: unreadCount } = api.notification.getUnreadCount.useQuery()
 
   // /habits/a15e86e8-15df-4025-be19-f052f3b61608/analysis
   const extendedPathname = pathname?.includes("/habits") ? pathname.slice(0,7) : pathname;
@@ -100,10 +102,25 @@ export default function DashboardSideBar() {
                     : "text-muted-foreground hover:bg-muted hover:text-foreground",
                 )}
               >
-                <Bell className="h-5 w-5 shrink-0" />
+                <div className="relative">
+                  <Bell className="h-5 w-5 shrink-0" />
+                  {!!unreadCount && unreadCount > 0 && (
+                    <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] text-primary-foreground group-hover:hidden">
+                      {unreadCount}
+                    </span>
+                  )}
+                  {!!unreadCount && unreadCount > 0 && (
+                    <span className="hidden group-hover:flex absolute right-0 top-0 h-2 w-2 rounded-full bg-primary" />
+                  )}
+                </div>
                 <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                   Notifications
                 </span>
+                {!!unreadCount && unreadCount > 0 && (
+                  <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 ml-auto bg-primary/20 text-primary text-[10px] font-bold px-1.5 py-0.5 rounded-full">
+                    {unreadCount}
+                  </span>
+                )}
               </div>
               <div
                 onClick={() => router.push("/settings")}

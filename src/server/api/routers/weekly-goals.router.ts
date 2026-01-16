@@ -1,4 +1,4 @@
-import { WeeklyRating } from './../../../types/schema/weeklyGoals/weeklygoalsTypes';
+import { WeeklyRating } from '~/types/schema/index';
 import { and, desc, eq } from 'drizzle-orm';
 import { z } from "zod";
 import { getISOWeek, getISOWeekYear } from "date-fns";

@@ -2,7 +2,7 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { betterAuth } from "better-auth";
 import { nextCookies } from "better-auth/next-js";
 import { db } from "~/server/db";
-import { account, session, user, verification } from '~/server/db/schema';
+import { account, session, user, verification, notification } from '~/server/db/schema';
 import { env } from "~/env";
 
 export const auth = betterAuth({
@@ -21,6 +21,20 @@ export const auth = betterAuth({
       verification,
     },
   }),
+  databaseHooks: {
+    user: {
+      create: {
+        after: async (user) => {
+          await db.insert(notification).values({
+            userId: user.id,
+            title: "Welcome to Our App! 🎉",
+            message: "We're excited to have you here! Get started by exploring your dashboard and adding up your first habit.",
+            type: "WELCOME",
+          });
+        },
+      },
+    },
+  },
   socialProviders: {
     google: {
       prompt: "select_account",

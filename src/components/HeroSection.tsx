@@ -20,7 +20,7 @@ export default function HeroSection() {
           
 
             {/* Main Heading */}
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-medium mb-6 leading-tight tracking-tight">
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-medium mb-6 leading-tight tracking-tight text-secondary">
               Organize your
               <br />
               <span className='font-serif italic'>habits</span> and <span className="font-serif italic">life.</span>

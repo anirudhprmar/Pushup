@@ -28,7 +28,7 @@ export const habitRouter = createTRPCRouter({
 
     return data;
     }),
-
+    
   createHabit: protectedProcedure
     .input(z.object({
         goalId: z.uuid().optional(),
@@ -422,6 +422,142 @@ export const habitRouter = createTRPCRouter({
         .filter(n => n.note && n.note.trim().length > 0)
         .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
         .slice(0, 10);
+    }),
+
+  getMonthlyAnalysis: protectedProcedure
+    .query(async ({ ctx }) => {
+      const currentYear = new Date().getFullYear()
+      const currentMonth = new Date().getMonth()
+      const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+
+      // Get all user habits
+      const userHabits = await ctx.db
+        .select()
+        .from(habits)
+        .where(eq(habits.userId, ctx.userId))
+
+      if (userHabits.length === 0) {
+        return []
+      }
+
+      // Get all logs for user's habits - query habitLogs directly and join to verify ownership
+      const allLogsData = await ctx.db
+        .select({
+          id: habitLogs.id,
+          habitId: habitLogs.habitId,
+          date: habitLogs.date,
+          completed: habitLogs.completed,
+          notes: habitLogs.notes,
+        })
+        .from(habitLogs)
+        .innerJoin(habits, eq(habitLogs.habitId, habits.id))
+        .where(eq(habits.userId, ctx.userId))
+
+      // Process logs to calculate monthly statistics
+      const stats: Array<{
+        month: number
+        monthName: string
+        totalHabits: number
+        totalDaysCompleted: number
+        totalDaysLogged: number
+        averageCompletionRate: number
+        growth: number | null
+        habitsBreakdown: Array<{
+          habitId: string
+          habitName: string
+          completedDays: number
+          loggedDays: number
+          completionRate: number
+        }>
+      }> = []
+
+      // Initialize stats for each month up to current month
+      for (let monthIndex = 0; monthIndex <= currentMonth; monthIndex++) {
+        const monthStats = {
+          month: monthIndex,
+          monthName: months[monthIndex]!,
+          totalHabits: 0,
+          totalDaysCompleted: 0,
+          totalDaysLogged: 0,
+          averageCompletionRate: 0,
+          growth: null as number | null,
+          habitsBreakdown: [] as Array<{
+            habitId: string
+            habitName: string
+            completedDays: number
+            loggedDays: number
+            completionRate: number
+          }>,
+        }
+
+        // Process each habit
+        userHabits.forEach((habit) => {
+          const habitCreatedDate = new Date(habit.createdAt)
+          const habitCreatedYear = habitCreatedDate.getFullYear()
+          const habitCreatedMonth = habitCreatedDate.getMonth()
+
+          // Only count habits that existed in this month
+          if (habitCreatedYear < currentYear || (habitCreatedYear === currentYear && habitCreatedMonth <= monthIndex)) {
+            monthStats.totalHabits++
+
+            // Get logs for this habit
+            const habitLogs = allLogsData.filter(log => log.habitId === habit.id)
+
+            // Filter logs for this month and year
+            // Date is stored as "YYYY-MM-DD" string
+            const monthLogs = habitLogs.filter((log) => {
+              const [year, month] = log.date.split('-').map(Number)
+              return year === currentYear && month === monthIndex + 1 // month is 1-indexed in date strings
+            })
+
+            const completedDays = monthLogs.filter((log) => log.completed).length
+            const loggedDays = monthLogs.length
+            const completionRate = loggedDays > 0 ? Math.round((completedDays / loggedDays) * 100) : 0
+
+            monthStats.totalDaysCompleted += completedDays
+            monthStats.totalDaysLogged += loggedDays
+
+            monthStats.habitsBreakdown.push({
+              habitId: habit.id,
+              habitName: habit.name,
+              completedDays,
+              loggedDays,
+              completionRate,
+            })
+          }
+        })
+
+        // Calculate average completion rate
+        if (monthStats.totalHabits > 0 && monthStats.habitsBreakdown.length > 0) {
+          const totalCompletionRates = monthStats.habitsBreakdown.reduce(
+            (sum, habit) => sum + habit.completionRate,
+            0
+          )
+          monthStats.averageCompletionRate = Math.round(totalCompletionRates / monthStats.habitsBreakdown.length)
+        }
+
+        stats.push(monthStats)
+      }
+
+      // Calculate growth for each month (compared to previous month)
+      stats.forEach((stat, index) => {
+        if (index > 0) {
+          const previousStat = stats[index - 1]!
+          if (previousStat.averageCompletionRate > 0) {
+            stat.growth = Math.round(
+              ((stat.averageCompletionRate - previousStat.averageCompletionRate) /
+                previousStat.averageCompletionRate) *
+                100
+            )
+          } else if (stat.averageCompletionRate > 0) {
+            stat.growth = 100 // First month with data
+          } else {
+            stat.growth = 0
+          }
+        }
+      })
+
+      return stats
     })
         
 });

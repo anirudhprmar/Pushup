@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { api } from "~/lib/api";
 import {
   Sheet,
   SheetContent,
@@ -60,6 +61,7 @@ export default function MobileBottomNav() {
   const pathname = usePathname();
   const router = useRouter();
   const [isMoreOpen, setIsMoreOpen] = React.useState(false);
+  const { data: unreadCount } = api.notification.getUnreadCount.useQuery();
 
   const handleMoreItemClick = (href: string) => {
     setIsMoreOpen(false);
@@ -148,16 +150,28 @@ export default function MobileBottomNav() {
                   >
                     <div
                       className={clsx(
-                        "flex items-center justify-center w-10 h-10 rounded-full",
+                        "flex items-center justify-center w-10 h-10 rounded-full relative",
                         pathname === item.href
                           ? "bg-primary/20 text-primary"
                           : "bg-muted text-muted-foreground"
                       )}
                     >
                       <item.icon className="h-5 w-5" />
+                      {item.label === "Notifications" && !!unreadCount && unreadCount > 0 && (
+                        <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] text-primary-foreground font-bold border-2 border-background">
+                          {unreadCount}
+                        </span>
+                      )}
                     </div>
                     <div className="flex-1 text-left">
-                      <p className="font-medium">{item.label}</p>
+                      <div className="flex items-center justify-between">
+                        <p className="font-medium">{item.label}</p>
+                        {item.label === "Notifications" && !!unreadCount && unreadCount > 0 && (
+                          <span className="bg-primary/20 text-primary text-[10px] font-bold px-2 py-0.5 rounded-full">
+                            {unreadCount} new
+                          </span>
+                        )}
+                      </div>
                       <p className="text-sm text-muted-foreground">
                         {item.description}
                       </p>

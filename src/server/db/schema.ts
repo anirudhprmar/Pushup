@@ -20,6 +20,10 @@ export const goalStatus = pgEnum('pushup_goal_status',[
   "PENDING","IN_PROGRESS","COMPLETED","FAILED","ACHIEVED"
 ])
 
+export const notificationType = pgEnum('pushup_notification',[
+  "INFO","FEATURE","UPDATE","WARNING","SUCCESS","WELCOME"
+])
+
 export const user = createTable(
   "user",
   (d) => ({
@@ -177,6 +181,24 @@ export const weeklyGoals = createTable(
       .notNull()
   }),
   (t) => [uniqueIndex("unique_week_plan").on(t.userId,t.year,t.weekNumber)]
+)
+
+export const notification = createTable(
+  "notifications",
+  (d) => ({
+    id:d.uuid("id").defaultRandom().primaryKey(),
+    userId: d.text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+    title:d.text("title"),
+    message:d.text("message"),
+    read:d.boolean().default(false),
+    type:notificationType().notNull(),
+    createdAt:d.timestamp("created_at")
+      .$defaultFn(()=> new Date())
+      .notNull()
+  }),
+  (t) => [index("user_interacted_notifcation").on(t.userId,t.read)]
 )
 
 //___________Relations_____________

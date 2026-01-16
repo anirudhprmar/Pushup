@@ -7,7 +7,6 @@
  * need to use are documented accordingly near the end.
  */
 import { initTRPC, TRPCError } from "@trpc/server";
-import { headers } from "next/headers";
 import superjson from "superjson";
 import { ZodError } from "zod";
 import { auth } from "~/lib/auth";
@@ -29,7 +28,7 @@ export const createTRPCContext = async (opts: { headers: Headers }) => {
   let session = null;
   try {
     session = await Promise.race([
-      auth.api.getSession({ headers: await headers() }),
+      auth.api.getSession({ headers: opts.headers }),
       new Promise<null>((_, reject) => 
         setTimeout(() => reject(new Error('Session timeout')), 2000)
       )

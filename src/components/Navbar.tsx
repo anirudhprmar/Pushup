@@ -27,7 +27,7 @@ export default function Navbar() {
           
           {/* Logo */}
           <div className="flex items-center">
-            <span className="text-xl font-bold tracking-tight">PushUp</span>
+            <span className="text-xl font-bold tracking-tight text-secondary">PushUp</span>
           </div>
 
           {/* Desktop Nav (Hidden on Mobile) */}

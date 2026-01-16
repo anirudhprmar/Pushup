@@ -3,6 +3,7 @@ import { api, HydrateClient } from "~/trpc/server";
 import { redirect } from "next/navigation";
 import HabitVisualizer from "../habits/_components/HabitVisualizer";
 import UserProgress from "./_components/UserProgress";
+import MonthlyAnalysis from "./_components/MonthlyAnalysis";
 
 
 export default async function profile() {
@@ -32,7 +33,9 @@ export default async function profile() {
         </div>
 
         <div>
-          <p className="text-muted-foreground">Last 90 days</p>
+          {/* last 90 days progress of each habit just like habit analysis, progress i made in this month: monthly analysis like jan : habit completion rate & no. of tasks completed,  */}
+          {/* <p className="text-muted-foreground">Last 90 days</p> */}
+          <MonthlyAnalysis/>
         </div>
 
         </div>

@@ -57,6 +57,20 @@
       "when": 1768221861650,
       "tag": "0007_productive_energizer",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1768479147288,
+      "tag": "0008_dark_toad_men",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1768479282794,
+      "tag": "0009_flowery_nemesis",
+      "breakpoints": true
     }
   ]
 }

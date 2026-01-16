@@ -1,4 +1,3 @@
-// enums.ts
 export enum GoalType {
   DAILY = "DAILY",
   WEEKLY = "WEEKLY",
@@ -13,4 +12,21 @@ export enum GoalStatus {
   COMPLETED = "COMPLETED",
   FAILED = "FAILED",
   ACHIEVED = "ACHIEVED"
+}
+
+export enum WeeklyRating {
+    Unrated = 0,
+    Terrible = 1,
+    Bad = 2,
+    Neutral = 3,
+    Good = 4,
+    Great = 5
+}
+
+export enum NotificationType {
+  INFO = "INFO",
+  FEATURE = "FEATURE",
+  UPDATE = "UPDATE",
+  WARNING = "WARNING",
+  WELCOME = "WELCOME"
 }

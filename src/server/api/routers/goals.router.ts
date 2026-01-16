@@ -2,8 +2,8 @@ import { and, eq } from 'drizzle-orm';
 import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure} from "~/server/api/trpc";
-import { GoalStatus, GoalType } from '~/types/schema/goals/goalsTypes';
 import { goals } from '~/server/db/schema';
+import { GoalStatus, GoalType } from '~/types/schema';
 
 
 export const goalsRouter = createTRPCRouter({
