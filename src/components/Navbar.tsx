@@ -34,8 +34,7 @@ export default function Navbar() {
           <div className="hidden md:flex md:items-center md:gap-8">
             <ul className="flex gap-6 text-sm font-medium text-slate-600">
               <li className="hover:text-black cursor-pointer transition-colors">Features</li>
-              {/* <li className="hover:text-black cursor-pointer transition-colors">Demo</li> */}
-              {/* <li className="hover:text-black cursor-pointer transition-colors">Pricing</li> */}
+              <li className="hover:text-black cursor-pointer transition-colors">Demo</li>
               <li className="hover:text-black cursor-pointer transition-colors">FAQ</li>
             </ul>
             <Link href="/login">
@@ -75,8 +74,7 @@ export default function Navbar() {
           <div className="min-h-0 overflow-hidden">
             <ul className="flex flex-col gap-4 pt-2 text-center text-lg font-medium text-gray-600">
               <li className="py-2 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors">Features</li>
-              {/* <li className="py-2 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors">Pricing</li> */}
-              {/* <li className="py-2 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors">Demo</li> */}
+              <li className="py-2 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors">Demo</li>
               <li className="py-2 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors">FAQ</li>
               <li className="pb-3">
                  <Link href="/login" className="block" onClick={() => setIsMenuOpen(false)}
