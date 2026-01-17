@@ -1,17 +1,23 @@
 import { api, HydrateClient } from "~/trpc/server";
-
 import { redirect } from "next/navigation";
+
 import HabitVisualizer from "../habits/_components/HabitVisualizer";
 import UserProgress from "./_components/UserProgress";
 import MonthlyAnalysis from "./_components/MonthlyAnalysis";
 
 
 export default async function profile() {
-
-  const user = await api.user.me();
+  let user;
+  
+  try {
+    user = await api.user.me();
+  } catch {
+    // If unauthorized or any error, redirect to login
+    redirect("/login");
+  }
 
   if (!user) {
-    redirect("/login")
+    redirect("/login");
   }
 
   const date = new Date().toISOString().split("T")[0]!
@@ -22,7 +28,9 @@ export default async function profile() {
       <main className="min-h-screen">
         <div className="mx-auto max-w-4xl p-3">
           <header className="flex items-center justify-between gap-2">
-            <h1 className="font-bold text-3xl">Hi!, {user.name?.split(" ")[0] ?? "there"}</h1>
+            <h1 className="font-bold text-3xl">
+              {user.name ? `Hi!, ${user.name.split(" ")[0]}` : "Hi!"}
+            </h1>
             <p className="text-3xl text-muted-foreground tracking-tighter" aria-label={`Year ${year}`}>
               {year}
             </p>
