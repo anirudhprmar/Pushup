@@ -6,7 +6,7 @@ import { ConfettiCelebration } from "~/components/ConfettiCelebration";
 import { api } from "~/lib/api";
 
 export function AnimatedCheckTasks({taskId,habitId,checkedStatus}:{taskId:string,habitId?:string, checkedStatus?:boolean}) {
-  const [isChecked,setIsChecked] = useState(checkedStatus ?? false)
+  const [isChecked,setIsChecked] = useState(false)
 
     const trpc = api.useUtils()
     const markCompleted = api.tasks.completeTask.useMutation({
@@ -33,7 +33,7 @@ export function AnimatedCheckTasks({taskId,habitId,checkedStatus}:{taskId:string
       {/* click off update the database with not completed */}
 
       <AnimatePresence mode="wait">
-        {isChecked ? (
+        {isChecked || checkedStatus ? (
           <motion.div
             key="checked"
             initial={{ scale: 0, rotate: -180 }}
