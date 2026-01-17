@@ -5,21 +5,24 @@ import { useState } from "react";
 import { ConfettiCelebration } from "~/components/ConfettiCelebration";
 import { api } from "~/lib/api";
 
-export function AnimatedCheckTasks({taskId,habitId,checkedStatus}:{taskId:string,habitId:string, checkedStatus?:boolean}) {
-  const [isChecked,setIsChecked] = useState(false)
+export function AnimatedCheckTasks({taskId,habitId,checkedStatus}:{taskId:string,habitId?:string, checkedStatus?:boolean}) {
+  const [isChecked,setIsChecked] = useState(checkedStatus ?? false)
 
     const trpc = api.useUtils()
     const markCompleted = api.tasks.completeTask.useMutation({
       onSuccess: async () => {
-        await trpc.habits.invalidate()
-        await trpc.habits.getHabitCompletionDays.invalidate({habitId})
+        await trpc.tasks.invalidate()
+        if (habitId) {
+          await trpc.habits.invalidate()
+          await trpc.habits.getHabitCompletionDays.invalidate({habitId})
+        }
       }
     })
     
     const handleCheck = async()=>{
       await markCompleted.mutateAsync({
         taskId,
-        habitId,
+        habitId: habitId || undefined,
         completed:true
       })
       setIsChecked(true)
@@ -30,7 +33,7 @@ export function AnimatedCheckTasks({taskId,habitId,checkedStatus}:{taskId:string
       {/* click off update the database with not completed */}
 
       <AnimatePresence mode="wait">
-        {isChecked || checkedStatus ? (
+        {isChecked ? (
           <motion.div
             key="checked"
             initial={{ scale: 0, rotate: -180 }}

@@ -40,7 +40,7 @@ export function TaskCard({
           <div className="flex items-start justify-between gap-2">
                 <div className="flex items-center justify-center gap-2 ">
 
-                    <AnimatedCheckTasks taskId={userTask.id} habitId={userTask.habitId ?? ""} checkedStatus={userTask?.completed ?? false} />
+                    <AnimatedCheckTasks taskId={userTask.id} habitId={userTask.habitId ?? undefined} checkedStatus={userTask?.completed ?? false} />
 
                     <span className={`font-semibold text-base relative inline-block ${userTask?.completed ? 'opacity-60 scale-[0.98]':'text-foreground/90 dark:text-foreground '}`} >
                         {userTask.task}

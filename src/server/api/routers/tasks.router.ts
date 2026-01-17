@@ -29,7 +29,7 @@ export const tasksRouter = createTRPCRouter({
      completeTask:protectedProcedure
         .input(z.object({
           taskId:z.uuid(),
-          habitId:z.uuid(),
+          habitId:z.uuid().optional(),
           completed:z.boolean(),
         }))
         .mutation(async({ctx,input})=>{
